@@ -1,0 +1,28 @@
+version: '3.4'
+
+volumes:
+  cassandra_data:
+    driver: local
+
+networks:
+  keycloak:
+    driver: bridge
+
+services:
+  cassandra:
+    image: docker.io/bitnami/cassandra:latest
+    ports:
+      - '9042:9042'
+    volumes:
+      - 'cassandra_data:/bitnami'
+    networks:
+      - keycloak
+    healthcheck:
+      test: /opt/bitnami/cassandra/bin/cqlsh -u cassandra -p cassandra -e "describe keyspaces"
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    environment:
+      - CASSANDRA_SEEDS=cassandra
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_PASSWORD=cassandra
