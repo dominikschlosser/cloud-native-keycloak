@@ -20,9 +20,9 @@ CRs or YAML files Keycloak reads are the committed files themselves.
 
 | # | Scenario | Config store | Dynamic store | Database-free | Organizations | Config as |
 |---|---|---|---|:---:|:---:|---|
-| 1 | [operator-stateless](scenarios/01-operator-stateless) | standard Keycloak | PostgreSQL | no | **yes** | `KeycloakRealmImport` CR |
-| 2 | [terraform](scenarios/02-terraform) | standard Keycloak | PostgreSQL | no | **yes** | Terraform HCL |
-| 3 | [keycloak-config-cli](scenarios/03-keycloak-config-cli) | standard Keycloak | PostgreSQL | no | **yes** | realm representation YAML |
+| 1 | [operator-stateless](scenarios/01-operator-stateless) | PostgreSQL | PostgreSQL | no | yes | `KeycloakRealmImport` CR |
+| 2 | [terraform](scenarios/02-terraform) | PostgreSQL | PostgreSQL | no | yes | Terraform HCL |
+| 3 | [keycloak-config-cli](scenarios/03-keycloak-config-cli) | PostgreSQL | PostgreSQL | no | yes | realm representation YAML |
 | 4 | [k8store-postgres](scenarios/04-k8store-postgres) | Kubernetes CRs | PostgreSQL | no | no | k8store CR manifests |
 | 5 | [k8store-cassandra](scenarios/05-k8store-cassandra) | Kubernetes CRs | Cassandra | yes | no | k8store CR manifests |
 | 6 | [filestore-postgres](scenarios/06-filestore-postgres) | YAML files | PostgreSQL | no | no | filestore YAML files |
@@ -84,6 +84,11 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   exposes a subset of server options as fields. Other options go through `additionalOptions` (server
   config keys only). Custom provider jars, themes, and arbitrary pod/container fields are not
   expressible through the CR (they need a custom image or `spec.unsupported.podTemplate`).
+- **Re-sync reliability:** `KeycloakRealmImport` uses the Admin REST API v1, which does not diff
+  cleanly, so re-importing can recreate sub-resources it should leave alone (notably authentication
+  flows) and break in-flight logins, sometimes needing a manual DB fix or a full reset and re-import.
+  26.7.0 adds a validated, declarative path on the new **Admin API v2** through the operator's
+  `KeycloakOIDCClient` and `KeycloakSAMLClient` CRs, but it covers clients only so far.
 - **Config drift:** the database is always writable through the console and admin API. There is no
   store-level read-only. Preventing unintended config changes has to be done inside Keycloak with
   fine-grained admin permissions (role configuration). Scenarios 4-7 can instead reject all config
@@ -104,6 +109,10 @@ Factual characteristics per scenario, along the dimensions that distinguish them
 - **Config surface:** the provider exposes a defined set of resources (realms, clients, scopes, roles,
   flows, and more) with HCL interpolation and modules, and can manage systems beyond Keycloak. It does
   not cover every Keycloak feature (support for a new feature lands after a provider release).
+- **Re-sync reliability:** the provider applies through the Admin REST API v1. Re-applying can
+  recreate resources it does not diff cleanly (for example authentication flows) and break logins,
+  sometimes needing a DB fix or a reset and re-import. Only clients have a validated declarative path
+  today (Admin API v2).
 - **Config drift:** the database is always writable. `terraform plan` surfaces drift, and reconciling
   means re-running apply. As with the operator, blocking config changes at the source needs Keycloak
   admin RBAC (there is no store-level read-only).
@@ -122,6 +131,10 @@ Factual characteristics per scenario, along the dimensions that distinguish them
 - **Backup/restore:** back up the database. The realm file reproduces the imported config.
 - **Config surface:** Keycloak's realm representation (the same shape as a realm export), so
   realm-level config is complete. It applies whole realms rather than individual resources.
+- **Re-sync reliability:** config-cli applies through the Admin REST API v1. Re-running can delete and
+  recreate resources it does not diff finely (authentication flows have caused login errors during
+  provisioning, adorsys/keycloak-config-cli#875), sometimes needing a DB fix or a reset and re-import.
+  Only clients have a validated declarative path today (Admin API v2).
 - **Config drift:** the database is always writable. Re-running config-cli reconciles the realm back
   to the file. As with the operator and terraform, there is no store-level read-only.
 - **Zero-downtime upgrades:** rolling update of the Deployment. Database schema migrations run.
@@ -139,6 +152,9 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   up PostgreSQL for users and sessions.
 - **Config surface:** CRs hold Keycloak's own representation JSON verbatim, so any field an export
   produces is expressible.
+- **Re-sync reliability:** config is served from the CRs directly, not imported through the Admin REST
+  API, so it avoids the Admin API v1 re-sync problems (recreated authentication flows, and similar)
+  that affect scenarios 1-3.
 - **Config drift:** the pre-configured instance runs read-only, so Keycloak rejects all config writes
   and the committed CRs stay authoritative (no in-Keycloak RBAC needed to keep git the source of
   truth). The empty instance runs writable for click-config.
@@ -172,6 +188,8 @@ Factual characteristics per scenario, along the dimensions that distinguish them
 - **Backup/restore:** the YAML files in git (and the image) are the config backup. Back up PostgreSQL
   for users and sessions.
 - **Config surface:** files hold Keycloak's representation, identity providers included.
+- **Re-sync reliability:** config is served from the files directly, not imported through the Admin
+  REST API, so it avoids the Admin API v1 re-sync problems that affect scenarios 1-3.
 - **Config drift:** the pre-configured instance mounts the files read-only (baked into the image), so
   the committed files stay authoritative. The empty instance runs writable on a per-pod volume.
 - **Zero-downtime upgrades:** rolling update replaces pods with the new image. Database migrations
