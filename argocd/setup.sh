@@ -70,7 +70,7 @@ ArgoCD deployed Keycloak + CRs from the in-cluster git repo (read-only).
   Verify:  CNK_KC_SVC=keycloak test/verify.sh kc-argocd demo demo-app
   Console: http://localhost:8080  (admin/admin)
   ArgoCD:  kubectl -n argocd port-forward svc/argocd-server 8081:443  (https://localhost:8081, admin/admin)
-  Change config the GitOps way: edit argocd/app/config/*.yaml, rebuild+push the git-server
-  image (or push to the repo), and ArgoCD reconciles it.
+  Change config the GitOps way: push a commit to the git server (see argocd/README.md), and
+  ArgoCD reconciles it. No image rebuild.
   Tear down: argocd/teardown.sh
 EOF

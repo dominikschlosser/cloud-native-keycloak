@@ -53,6 +53,21 @@ kubectl -n argocd port-forward svc/argocd-server 8081:443
 
 ## Changing config the GitOps way
 
-Edit a CR under `app/config/`, rebuild and push the git-server image (or push a commit to the repo),
-and ArgoCD reconciles the change. The Application uses automated sync with self-heal, so a manual
-`kubectl` edit inside `kc-argocd` is reverted to match git.
+The git server holds a real git repo (seeded from `app/` at build time). Change config by pushing a
+commit to it, the same as you would to any remote. ArgoCD reconciles the change and k8store serves it
+with no restart.
+
+```bash
+kubectl -n argocd port-forward svc/git-server 9418:9418 &
+git clone git://localhost:9418/repo /tmp/keycloak-gitops
+cd /tmp/keycloak-gitops
+# edit config/*.yaml, then:
+git commit -am "update realm" && git push origin main
+kubectl -n argocd annotate application keycloak-k8store argocd.argoproj.io/refresh=hard --overwrite
+```
+
+The Application uses automated sync with self-heal, so a manual `kubectl` edit inside `kc-argocd` is
+reverted to match git. In a real setup ArgoCD points at your own remote (for example this repo on
+GitHub) and you just commit to `argocd/app/` and push there. The in-cluster git server is a
+self-contained stand-in so the demo needs no external repo. Its repo is ephemeral (a pod restart
+resets it to the baked seed).
