@@ -1,0 +1,8 @@
+attributes: {}
+clientId: master-realm
+compositeRoles: []
+description: ${role_view-realm}
+id: master-realm:view-realm
+name: view-realm
+realmId: master
+updated: false

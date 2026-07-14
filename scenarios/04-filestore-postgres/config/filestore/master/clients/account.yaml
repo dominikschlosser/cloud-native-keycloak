@@ -1,0 +1,50 @@
+alwaysDisplayInConsole: false
+attributes:
+  post.logout.redirect.uris: +
+authenticationFlowBindingOverrides: {}
+baseUrl: /realms/master/account/
+bearerOnly: null
+clientAuthenticatorType: client-secret
+clientId: account
+clientScopes:
+  web-origins: true
+  acr: true
+  address: false
+  phone: false
+  profile: true
+  roles: true
+  offline_access: false
+  microprofile-jwt: false
+  basic: true
+  email: true
+consentRequired: null
+description: null
+directAccessGrantsEnabled: null
+enabled: true
+frontchannelLogout: null
+fullScopeAllowed: false
+id: account
+implicitFlowEnabled: null
+managementUrl: null
+multiValueAttributes:
+  post.logout.redirect.uris:
+  - +
+name: ${client_account}
+nodeReRegistrationTimeout: null
+notBefore: null
+protocol: openid-connect
+protocolMappers: []
+publicClient: true
+realmId: master
+redirectUris:
+- /realms/master/account/*
+registrationToken: null
+rootUrl: ${authBaseUrl}
+scope: []
+scopeMappings: []
+secret: null
+serviceAccountsEnabled: null
+standardFlowEnabled: true
+surrogateAuthRequired: null
+updated: false
+webOrigins: []

@@ -1,0 +1,32 @@
+apiVersion: k8s.keycloak.org/v2beta1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: kc-01
+spec:
+  instances: 2
+  db:
+    vendor: postgres
+    host: postgres
+    database: keycloak
+    usernameSecret:
+      name: keycloak-db-secret
+      key: username
+    passwordSecret:
+      name: keycloak-db-secret
+      key: password
+  # stateless keeps only an embedded local cache and moves session/auth state to the
+  # database, which is the cloud-native (no external Infinispan) operating mode.
+  features:
+    enabled:
+      - stateless
+  http:
+    httpEnabled: true
+  hostname:
+    strict: false
+  # No ingress controller in kind; reach Keycloak through the operator's Service.
+  ingress:
+    enabled: false
+  bootstrapAdmin:
+    user:
+      secret: keycloak-admin

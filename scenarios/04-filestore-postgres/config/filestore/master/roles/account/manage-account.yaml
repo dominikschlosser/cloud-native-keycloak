@@ -1,0 +1,9 @@
+attributes: {}
+clientId: account
+compositeRoles:
+- account:manage-account-links
+description: ${role_manage-account}
+id: account:manage-account
+name: manage-account
+realmId: master
+updated: false

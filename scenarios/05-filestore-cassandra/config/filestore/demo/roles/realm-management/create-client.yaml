@@ -1,0 +1,8 @@
+attributes: {}
+clientId: realm-management
+compositeRoles: []
+description: ${role_create-client}
+id: realm-management:create-client
+name: create-client
+realmId: demo
+updated: false

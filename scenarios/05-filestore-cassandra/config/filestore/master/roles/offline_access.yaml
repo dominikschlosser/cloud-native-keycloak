@@ -1,0 +1,8 @@
+attributes: {}
+clientId: null
+compositeRoles: []
+description: ${role_offline-access}
+id: offline_access
+name: offline_access
+realmId: master
+updated: false

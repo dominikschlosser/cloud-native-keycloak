@@ -1,0 +1,54 @@
+alwaysDisplayInConsole: false
+attributes:
+  backchannel.logout.session.required: 'true'
+  backchannel.logout.revoke.offline.tokens: 'false'
+authenticationFlowBindingOverrides: {}
+baseUrl: null
+bearerOnly: false
+clientAuthenticatorType: client-secret
+clientId: demo-app
+clientScopes:
+  web-origins: true
+  acr: true
+  address: false
+  phone: false
+  profile: true
+  roles: true
+  offline_access: false
+  microprofile-jwt: false
+  basic: true
+  email: true
+consentRequired: false
+description: null
+directAccessGrantsEnabled: true
+enabled: true
+frontchannelLogout: false
+fullScopeAllowed: true
+id: demo-app
+implicitFlowEnabled: false
+managementUrl: null
+multiValueAttributes:
+  backchannel.logout.session.required:
+  - 'true'
+  backchannel.logout.revoke.offline.tokens:
+  - 'false'
+name: null
+nodeReRegistrationTimeout: -1
+notBefore: 0
+protocol: openid-connect
+protocolMappers: []
+publicClient: false
+realmId: demo
+redirectUris:
+- https://demo-app.example.com/*
+registrationToken: null
+rootUrl: null
+scope: []
+scopeMappings: []
+secret: demo-secret
+serviceAccountsEnabled: false
+standardFlowEnabled: true
+surrogateAuthRequired: false
+updated: false
+webOrigins:
+- +

@@ -1,0 +1,8 @@
+attributes: {}
+clientId: account
+compositeRoles: []
+description: ${role_view-profile}
+id: account:view-profile
+name: view-profile
+realmId: master
+updated: false

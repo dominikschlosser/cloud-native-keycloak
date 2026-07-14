@@ -1,0 +1,35 @@
+attributes:
+  include.in.token.scope: 'true'
+  display.on.consent.screen: 'false'
+description: Microprofile - JWT built-in scope
+id: microprofile-jwt
+name: microprofile-jwt
+protocol: openid-connect
+protocolMappers:
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: username
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: upn
+    jsonType.label: String
+  id: ab8c84df-6dd4-4bbc-8b36-01b9e42ce94b
+  isUpdated: false
+  name: upn
+  protocolMapper: oidc-usermodel-attribute-mapper
+- config:
+    usermodel.realmRoleMapping.rolePrefix: null
+    introspection.token.claim: 'true'
+    multivalued: 'true'
+    user.attribute: foo
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: groups
+    jsonType.label: String
+  id: bbcf817d-84f3-4678-9fdd-9e28975b6ef8
+  isUpdated: false
+  name: groups
+  protocolMapper: oidc-usermodel-realm-role-mapper
+realmId: master
+scopeMappings: []

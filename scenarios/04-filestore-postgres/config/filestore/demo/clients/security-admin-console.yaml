@@ -1,0 +1,69 @@
+alwaysDisplayInConsole: false
+attributes:
+  client.use.lightweight.access.token.enabled: 'true'
+  post.logout.redirect.uris: +
+  pkce.code.challenge.method: S256
+authenticationFlowBindingOverrides: {}
+baseUrl: /admin/demo/console/
+bearerOnly: null
+clientAuthenticatorType: client-secret
+clientId: security-admin-console
+clientScopes:
+  web-origins: true
+  acr: true
+  address: false
+  phone: false
+  profile: true
+  roles: true
+  offline_access: false
+  microprofile-jwt: false
+  basic: true
+  email: true
+consentRequired: null
+description: null
+directAccessGrantsEnabled: null
+enabled: true
+frontchannelLogout: null
+fullScopeAllowed: true
+id: security-admin-console
+implicitFlowEnabled: null
+managementUrl: null
+multiValueAttributes:
+  client.use.lightweight.access.token.enabled:
+  - 'true'
+  post.logout.redirect.uris:
+  - +
+  pkce.code.challenge.method:
+  - S256
+name: ${client_security-admin-console}
+nodeReRegistrationTimeout: null
+notBefore: null
+protocol: openid-connect
+protocolMappers:
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: locale
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: locale
+    jsonType.label: String
+  id: cc625efa-9046-4e50-8f9b-e24f0547d9ce
+  isUpdated: false
+  name: locale
+  protocolMapper: oidc-usermodel-attribute-mapper
+publicClient: true
+realmId: demo
+redirectUris:
+- /admin/demo/console/*
+registrationToken: null
+rootUrl: ${authAdminUrl}
+scope: []
+scopeMappings: []
+secret: null
+serviceAccountsEnabled: null
+standardFlowEnabled: true
+surrogateAuthRequired: null
+updated: false
+webOrigins:
+- +

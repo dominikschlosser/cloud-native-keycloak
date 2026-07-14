@@ -1,0 +1,8 @@
+attributes: {}
+clientId: account
+compositeRoles: []
+description: ${role_delete-account}
+id: account:delete-account
+name: delete-account
+realmId: master
+updated: false

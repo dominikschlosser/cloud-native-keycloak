@@ -1,0 +1,19 @@
+attributes:
+  include.in.token.scope: 'false'
+  display.on.consent.screen: 'false'
+description: OpenID Connect scope for add acr (authentication context class reference)
+  to the token
+id: acr
+name: acr
+protocol: openid-connect
+protocolMappers:
+- config:
+    introspection.token.claim: 'true'
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+  id: 345194e7-bd36-43a1-a5ec-cb82756786eb
+  isUpdated: false
+  name: acr loa level
+  protocolMapper: oidc-acr-mapper
+realmId: master
+scopeMappings: []

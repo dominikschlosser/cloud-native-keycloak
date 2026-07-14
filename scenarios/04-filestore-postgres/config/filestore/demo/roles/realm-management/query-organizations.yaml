@@ -1,0 +1,8 @@
+attributes: {}
+clientId: realm-management
+compositeRoles: []
+description: ${role_query-organizations}
+id: realm-management:query-organizations
+name: query-organizations
+realmId: demo
+updated: false

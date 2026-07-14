@@ -1,0 +1,8 @@
+attributes: {}
+clientId: realm-management
+compositeRoles: []
+description: ${role_manage-identity-providers}
+id: realm-management:manage-identity-providers
+name: manage-identity-providers
+realmId: demo
+updated: false

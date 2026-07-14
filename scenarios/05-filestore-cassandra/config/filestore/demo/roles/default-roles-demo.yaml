@@ -1,0 +1,12 @@
+attributes: {}
+clientId: null
+compositeRoles:
+- account:view-profile
+- account:manage-account
+- offline_access
+- uma_authorization
+description: ${role_default-roles}
+id: default-roles-demo
+name: default-roles-demo
+realmId: demo
+updated: false

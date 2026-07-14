@@ -1,0 +1,28 @@
+attributes:
+  include.in.token.scope: 'false'
+  display.on.consent.screen: 'false'
+description: OpenID Connect scope for add all basic claims to the token
+id: basic
+name: basic
+protocol: openid-connect
+protocolMappers:
+- config:
+    user.session.note: AUTH_TIME
+    introspection.token.claim: 'true'
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: auth_time
+    jsonType.label: long
+  id: 366a8929-1f99-4095-85bd-4ba09b24b77f
+  isUpdated: false
+  name: auth_time
+  protocolMapper: oidc-usersessionmodel-note-mapper
+- config:
+    introspection.token.claim: 'true'
+    access.token.claim: 'true'
+  id: 08c64e4b-2dd1-420b-8563-622876520354
+  isUpdated: false
+  name: sub
+  protocolMapper: oidc-sub-mapper
+realmId: demo
+scopeMappings: []

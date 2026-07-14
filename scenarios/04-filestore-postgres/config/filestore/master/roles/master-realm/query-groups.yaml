@@ -1,0 +1,8 @@
+attributes: {}
+clientId: master-realm
+compositeRoles: []
+description: ${role_query-groups}
+id: master-realm:query-groups
+name: query-groups
+realmId: master
+updated: false

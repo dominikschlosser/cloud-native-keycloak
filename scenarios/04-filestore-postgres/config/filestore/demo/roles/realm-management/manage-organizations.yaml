@@ -1,0 +1,8 @@
+attributes: {}
+clientId: realm-management
+compositeRoles: []
+description: ${role_manage-organizations}
+id: realm-management:manage-organizations
+name: manage-organizations
+realmId: demo
+updated: false

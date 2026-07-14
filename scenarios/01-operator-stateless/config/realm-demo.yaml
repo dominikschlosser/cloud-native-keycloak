@@ -1,0 +1,47 @@
+# Version-controlled realm configuration, imported by the operator into the Keycloak CR.
+# This is the GitOps mechanism for the standard operator setup: commit the realm here and
+# the operator runs an import Job that materializes it. Dynamic data (users, sessions)
+# still lives in the database.
+apiVersion: k8s.keycloak.org/v2beta1
+kind: KeycloakRealmImport
+metadata:
+  name: demo
+  namespace: kc-01
+spec:
+  keycloakCRName: keycloak
+  realm:
+    realm: demo
+    enabled: true
+    displayName: Demo Realm
+    clientScopes:
+      - name: demo-scope
+        protocol: openid-connect
+        description: Demo client scope
+        attributes:
+          include.in.token.scope: "true"
+          display.on.consent.screen: "true"
+    roles:
+      realm:
+        - name: demo-role
+          description: Demo realm role
+    clients:
+      - clientId: demo-app
+        enabled: true
+        protocol: openid-connect
+        publicClient: false
+        standardFlowEnabled: true
+        directAccessGrantsEnabled: true
+        redirectUris:
+          - https://demo-app.example.com/*
+        webOrigins:
+          - "+"
+        secret: demo-secret
+    # Organizations are supported only in this scenario (standard Keycloak storage). The
+    # k8store default areas, filestore and cassandra scenarios keep the feature disabled.
+    organizationsEnabled: true
+    organizations:
+      - name: demo-org
+        alias: demo-org
+        enabled: true
+        domains:
+          - name: demo.example.com

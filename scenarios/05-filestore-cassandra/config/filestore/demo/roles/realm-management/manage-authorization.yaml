@@ -1,0 +1,8 @@
+attributes: {}
+clientId: realm-management
+compositeRoles: []
+description: ${role_manage-authorization}
+id: realm-management:manage-authorization
+name: manage-authorization
+realmId: demo
+updated: false

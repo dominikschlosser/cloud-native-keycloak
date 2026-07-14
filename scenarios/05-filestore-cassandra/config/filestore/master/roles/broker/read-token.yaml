@@ -1,0 +1,8 @@
+attributes: {}
+clientId: broker
+compositeRoles: []
+description: ${role_read-token}
+id: broker:read-token
+name: read-token
+realmId: master
+updated: false

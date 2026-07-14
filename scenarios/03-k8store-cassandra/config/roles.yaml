@@ -1,0 +1,608 @@
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.account-delete-account-180e8607
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: account
+  description: ${role_delete-account}
+  id: account:delete-account
+  name: delete-account
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.account-manage-account-f7aade6e
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: true
+  composites:
+    client:
+      account:
+        - manage-account-links
+  containerId: account
+  description: ${role_manage-account}
+  id: account:manage-account
+  name: manage-account
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.account-manage-account-links-592cc0e4
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: account
+  description: ${role_manage-account-links}
+  id: account:manage-account-links
+  name: manage-account-links
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.account-manage-consent-9fc41177
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: true
+  composites:
+    client:
+      account:
+        - view-consent
+  containerId: account
+  description: ${role_manage-consent}
+  id: account:manage-consent
+  name: manage-consent
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.account-view-applications-d4ded57d
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: account
+  description: ${role_view-applications}
+  id: account:view-applications
+  name: view-applications
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.account-view-consent-5af14848
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: account
+  description: ${role_view-consent}
+  id: account:view-consent
+  name: view-consent
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.account-view-groups-f42baf60
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: account
+  description: ${role_view-groups}
+  id: account:view-groups
+  name: view-groups
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.account-view-profile-73d3e100
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: account
+  description: ${role_view-profile}
+  id: account:view-profile
+  name: view-profile
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.broker-read-token-5439fcfb
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: broker
+  description: ${role_read-token}
+  id: broker:read-token
+  name: read-token
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.default-roles-demo
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  composite: true
+  composites:
+    client:
+      account:
+        - view-profile
+        - manage-account
+    realm:
+      - offline_access
+      - uma_authorization
+  containerId: demo
+  description: ${role_default-roles}
+  id: default-roles-demo
+  name: default-roles-demo
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.demo-role
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  composite: false
+  containerId: demo
+  description: Demo realm role
+  id: demo-role
+  name: demo-role
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.offline-access-49a76df3
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  composite: false
+  containerId: demo
+  description: ${role_offline-access}
+  id: offline_access
+  name: offline_access
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-create-client-2bca88c3
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_create-client}
+  id: realm-management:create-client
+  name: create-client
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-impersonation-99546756
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_impersonation}
+  id: realm-management:impersonation
+  name: impersonation
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-manage-authorization-1e604760
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_manage-authorization}
+  id: realm-management:manage-authorization
+  name: manage-authorization
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-manage-clients-8e196f21
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_manage-clients}
+  id: realm-management:manage-clients
+  name: manage-clients
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-manage-events-da6939c5
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_manage-events}
+  id: realm-management:manage-events
+  name: manage-events
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-manage-identity-providers-0638c59f
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_manage-identity-providers}
+  id: realm-management:manage-identity-providers
+  name: manage-identity-providers
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-manage-organizations-48407163
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_manage-organizations}
+  id: realm-management:manage-organizations
+  name: manage-organizations
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-manage-realm-6a4a14d2
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_manage-realm}
+  id: realm-management:manage-realm
+  name: manage-realm
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-manage-users-2d60cd72
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_manage-users}
+  id: realm-management:manage-users
+  name: manage-users
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-query-clients-5ab43f3a
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_query-clients}
+  id: realm-management:query-clients
+  name: query-clients
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-query-groups-db2139ab
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_query-groups}
+  id: realm-management:query-groups
+  name: query-groups
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-query-organizations-42b8b812
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_query-organizations}
+  id: realm-management:query-organizations
+  name: query-organizations
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-query-realms-ca9c464d
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_query-realms}
+  id: realm-management:query-realms
+  name: query-realms
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-query-users-f25584b8
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_query-users}
+  id: realm-management:query-users
+  name: query-users
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-realm-admin-0c9bf3db
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: true
+  composites:
+    client:
+      realm-management:
+        - create-client
+        - view-realm
+        - view-users
+        - view-clients
+        - view-events
+        - view-identity-providers
+        - view-authorization
+        - view-organizations
+        - manage-realm
+        - manage-users
+        - manage-clients
+        - manage-events
+        - manage-identity-providers
+        - manage-authorization
+        - manage-organizations
+        - query-users
+        - query-clients
+        - query-realms
+        - query-groups
+        - query-organizations
+        - impersonation
+  containerId: realm-management
+  description: ${role_realm-admin}
+  id: realm-management:realm-admin
+  name: realm-admin
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-view-authorization-3c964896
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_view-authorization}
+  id: realm-management:view-authorization
+  name: view-authorization
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-view-clients-f1db7b33
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: true
+  composites:
+    client:
+      realm-management:
+        - query-clients
+  containerId: realm-management
+  description: ${role_view-clients}
+  id: realm-management:view-clients
+  name: view-clients
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-view-events-16f62452
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_view-events}
+  id: realm-management:view-events
+  name: view-events
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-view-identity-providers-a434eb4c
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_view-identity-providers}
+  id: realm-management:view-identity-providers
+  name: view-identity-providers
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-view-organizations-58e64a6b
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: true
+  composites:
+    client:
+      realm-management:
+        - query-organizations
+  containerId: realm-management
+  description: ${role_view-organizations}
+  id: realm-management:view-organizations
+  name: view-organizations
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-view-realm-38362d9b
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: false
+  containerId: realm-management
+  description: ${role_view-realm}
+  id: realm-management:view-realm
+  name: view-realm
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.realm-management-view-users-d1166dd7
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  clientRole: true
+  composite: true
+  composites:
+    client:
+      realm-management:
+        - query-users
+        - query-groups
+  containerId: realm-management
+  description: ${role_view-users}
+  id: realm-management:view-users
+  name: view-users
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakRole
+metadata:
+  name: demo.uma-authorization-e63fc9f4
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  composite: false
+  containerId: demo
+  description: ${role_uma_authorization}
+  id: uma_authorization
+  name: uma_authorization
+  realm: demo

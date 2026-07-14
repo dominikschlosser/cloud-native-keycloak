@@ -1,0 +1,49 @@
+alwaysDisplayInConsole: false
+attributes:
+  client.use.lightweight.access.token.enabled: 'true'
+authenticationFlowBindingOverrides: {}
+baseUrl: null
+bearerOnly: null
+clientAuthenticatorType: client-secret
+clientId: admin-cli
+clientScopes:
+  web-origins: true
+  acr: true
+  address: false
+  phone: false
+  profile: true
+  roles: true
+  offline_access: false
+  microprofile-jwt: false
+  basic: true
+  email: true
+consentRequired: null
+description: null
+directAccessGrantsEnabled: true
+enabled: true
+frontchannelLogout: null
+fullScopeAllowed: true
+id: admin-cli
+implicitFlowEnabled: null
+managementUrl: null
+multiValueAttributes:
+  client.use.lightweight.access.token.enabled:
+  - 'true'
+name: ${client_admin-cli}
+nodeReRegistrationTimeout: null
+notBefore: null
+protocol: openid-connect
+protocolMappers: []
+publicClient: true
+realmId: master
+redirectUris: []
+registrationToken: null
+rootUrl: null
+scope: []
+scopeMappings: []
+secret: null
+serviceAccountsEnabled: null
+standardFlowEnabled: false
+surrogateAuthRequired: null
+updated: false
+webOrigins: []

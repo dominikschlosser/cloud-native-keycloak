@@ -1,0 +1,60 @@
+alwaysDisplayInConsole: false
+attributes:
+  post.logout.redirect.uris: +
+  pkce.code.challenge.method: S256
+authenticationFlowBindingOverrides: {}
+baseUrl: /realms/demo/account/
+bearerOnly: null
+clientAuthenticatorType: client-secret
+clientId: account-console
+clientScopes:
+  web-origins: true
+  acr: true
+  address: false
+  phone: false
+  profile: true
+  roles: true
+  offline_access: false
+  microprofile-jwt: false
+  basic: true
+  email: true
+consentRequired: null
+description: null
+directAccessGrantsEnabled: false
+enabled: true
+frontchannelLogout: null
+fullScopeAllowed: false
+id: account-console
+implicitFlowEnabled: null
+managementUrl: null
+multiValueAttributes:
+  post.logout.redirect.uris:
+  - +
+  pkce.code.challenge.method:
+  - S256
+name: ${client_account-console}
+nodeReRegistrationTimeout: null
+notBefore: null
+protocol: openid-connect
+protocolMappers:
+- config: {}
+  id: d94affb7-b4d0-4a73-ad20-e9e5ae96334c
+  isUpdated: false
+  name: audience resolve
+  protocolMapper: oidc-audience-resolve-mapper
+publicClient: true
+realmId: demo
+redirectUris:
+- /realms/demo/account/*
+registrationToken: null
+rootUrl: ${authBaseUrl}
+scope: []
+scopeMappings:
+- account:manage-account
+- account:view-groups
+secret: null
+serviceAccountsEnabled: null
+standardFlowEnabled: true
+surrogateAuthRequired: null
+updated: false
+webOrigins: []

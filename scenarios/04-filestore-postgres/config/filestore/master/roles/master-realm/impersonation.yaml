@@ -1,0 +1,8 @@
+attributes: {}
+clientId: master-realm
+compositeRoles: []
+description: ${role_impersonation}
+id: master-realm:impersonation
+name: impersonation
+realmId: master
+updated: false

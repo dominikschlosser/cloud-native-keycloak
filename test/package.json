@@ -1,0 +1,11 @@
+{
+  "name": "cnk-verify",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Browser-based admin console verification for cloud-native-keycloak scenarios",
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "puppeteer-core": "^24.0.0"
+  }
+}

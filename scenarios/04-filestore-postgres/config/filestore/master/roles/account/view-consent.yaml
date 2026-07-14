@@ -1,0 +1,8 @@
+attributes: {}
+clientId: account
+compositeRoles: []
+description: ${role_view-consent}
+id: account:view-consent
+name: view-consent
+realmId: master
+updated: false

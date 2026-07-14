@@ -1,0 +1,9 @@
+attributes: {}
+clientId: master-realm
+compositeRoles:
+- master-realm:query-organizations
+description: ${role_view-organizations}
+id: master-realm:view-organizations
+name: view-organizations
+realmId: master
+updated: false

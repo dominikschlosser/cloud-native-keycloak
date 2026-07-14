@@ -1,0 +1,8 @@
+attributes: {}
+clientId: realm-management
+compositeRoles: []
+description: ${role_query-users}
+id: realm-management:query-users
+name: query-users
+realmId: demo
+updated: false

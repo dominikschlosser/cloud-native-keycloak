@@ -1,0 +1,10 @@
+attributes:
+  include.in.token.scope: 'true'
+  display.on.consent.screen: 'true'
+description: Demo client scope
+id: demo-scope
+name: demo-scope
+protocol: openid-connect
+protocolMappers: []
+realmId: demo
+scopeMappings: []

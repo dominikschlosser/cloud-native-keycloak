@@ -1,0 +1,9 @@
+attributes: {}
+clientId: account
+compositeRoles:
+- account:view-consent
+description: ${role_manage-consent}
+id: account:manage-consent
+name: manage-consent
+realmId: master
+updated: false

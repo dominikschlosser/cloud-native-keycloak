@@ -1,0 +1,26 @@
+attributes:
+  consent.screen.text: ${addressScopeConsentText}
+  include.in.token.scope: 'true'
+  display.on.consent.screen: 'true'
+description: 'OpenID Connect built-in scope: address'
+id: address
+name: address
+protocol: openid-connect
+protocolMappers:
+- config:
+    user.attribute.formatted: formatted
+    user.attribute.country: country
+    introspection.token.claim: 'true'
+    user.attribute.postal_code: postal_code
+    userinfo.token.claim: 'true'
+    user.attribute.street: street
+    id.token.claim: 'true'
+    user.attribute.region: region
+    access.token.claim: 'true'
+    user.attribute.locality: locality
+  id: e18742a6-4aad-4e06-aa19-e3f175c00284
+  isUpdated: false
+  name: address
+  protocolMapper: oidc-address-mapper
+realmId: demo
+scopeMappings: []

@@ -1,0 +1,176 @@
+attributes:
+  consent.screen.text: ${profileScopeConsentText}
+  include.in.token.scope: 'true'
+  display.on.consent.screen: 'true'
+description: 'OpenID Connect built-in scope: profile'
+id: profile
+name: profile
+protocol: openid-connect
+protocolMappers:
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+  id: 119f6fea-5b74-4e45-b8bc-bc15f6d938a3
+  isUpdated: false
+  name: full name
+  protocolMapper: oidc-full-name-mapper
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: lastName
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: family_name
+    jsonType.label: String
+  id: 15928df4-d7b3-42a1-9537-a8cb0206bb06
+  isUpdated: false
+  name: family name
+  protocolMapper: oidc-usermodel-attribute-mapper
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: firstName
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: given_name
+    jsonType.label: String
+  id: d9135dd0-0543-41ff-958a-64df6b95a0ab
+  isUpdated: false
+  name: given name
+  protocolMapper: oidc-usermodel-attribute-mapper
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: middleName
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: middle_name
+    jsonType.label: String
+  id: 41cd0863-2727-45cc-ad5d-a3540e09084f
+  isUpdated: false
+  name: middle name
+  protocolMapper: oidc-usermodel-attribute-mapper
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: nickname
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: nickname
+    jsonType.label: String
+  id: 6fe1d8a0-febe-48a8-b7ea-dea885357742
+  isUpdated: false
+  name: nickname
+  protocolMapper: oidc-usermodel-attribute-mapper
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: username
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: preferred_username
+    jsonType.label: String
+  id: af42214e-2da6-4470-93ef-337ee57db48e
+  isUpdated: false
+  name: username
+  protocolMapper: oidc-usermodel-attribute-mapper
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: profile
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: profile
+    jsonType.label: String
+  id: 026f49bb-8919-469b-9e9a-91af4e87369a
+  isUpdated: false
+  name: profile
+  protocolMapper: oidc-usermodel-attribute-mapper
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: picture
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: picture
+    jsonType.label: String
+  id: e8af9c74-c7d5-44a7-9d30-ea7c04132fac
+  isUpdated: false
+  name: picture
+  protocolMapper: oidc-usermodel-attribute-mapper
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: website
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: website
+    jsonType.label: String
+  id: 88228562-d6f1-459a-b815-eca59bc02037
+  isUpdated: false
+  name: website
+  protocolMapper: oidc-usermodel-attribute-mapper
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: gender
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: gender
+    jsonType.label: String
+  id: c3547a4d-7063-45a2-b94d-8d2109abe370
+  isUpdated: false
+  name: gender
+  protocolMapper: oidc-usermodel-attribute-mapper
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: birthdate
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: birthdate
+    jsonType.label: String
+  id: 15831915-baa3-40e3-aeec-700f18f93ad8
+  isUpdated: false
+  name: birthdate
+  protocolMapper: oidc-usermodel-attribute-mapper
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: zoneinfo
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: zoneinfo
+    jsonType.label: String
+  id: 131cddce-ae49-4f08-8cec-660387a8cb3b
+  isUpdated: false
+  name: zoneinfo
+  protocolMapper: oidc-usermodel-attribute-mapper
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: locale
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: locale
+    jsonType.label: String
+  id: 944a31d9-eb1b-4726-b203-821a684c51dc
+  isUpdated: false
+  name: locale
+  protocolMapper: oidc-usermodel-attribute-mapper
+- config:
+    introspection.token.claim: 'true'
+    userinfo.token.claim: 'true'
+    user.attribute: updatedAt
+    id.token.claim: 'true'
+    access.token.claim: 'true'
+    claim.name: updated_at
+    jsonType.label: long
+  id: fac5df8b-ede7-453f-9984-cd8fd065b3d7
+  isUpdated: false
+  name: updated at
+  protocolMapper: oidc-usermodel-attribute-mapper
+realmId: master
+scopeMappings: []

@@ -1,0 +1,8 @@
+attributes: {}
+clientId: realm-management
+compositeRoles: []
+description: ${role_manage-events}
+id: realm-management:manage-events
+name: manage-events
+realmId: demo
+updated: false

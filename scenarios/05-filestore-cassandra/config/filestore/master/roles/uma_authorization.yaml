@@ -1,0 +1,8 @@
+attributes: {}
+clientId: null
+compositeRoles: []
+description: ${role_uma_authorization}
+id: uma_authorization
+name: uma_authorization
+realmId: master
+updated: false

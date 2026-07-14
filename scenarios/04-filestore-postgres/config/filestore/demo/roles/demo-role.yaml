@@ -1,0 +1,8 @@
+attributes: {}
+clientId: null
+compositeRoles: []
+description: Demo realm role
+id: demo-role
+name: demo-role
+realmId: demo
+updated: false

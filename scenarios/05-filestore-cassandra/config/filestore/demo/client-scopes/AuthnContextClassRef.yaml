@@ -1,0 +1,13 @@
+attributes: {}
+description: AuthnContextClassRef Level of Authentiation
+id: AuthnContextClassRef
+name: AuthnContextClassRef
+protocol: saml
+protocolMappers:
+- config: {}
+  id: f82d4844-dbb7-4266-a13e-d1dae5b1f531
+  isUpdated: false
+  name: AuthnContextClassRef
+  protocolMapper: saml-authn-context-class-ref-mapper
+realmId: demo
+scopeMappings: []

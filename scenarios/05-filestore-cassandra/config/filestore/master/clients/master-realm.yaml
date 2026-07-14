@@ -1,0 +1,46 @@
+alwaysDisplayInConsole: null
+attributes: {}
+authenticationFlowBindingOverrides: {}
+baseUrl: null
+bearerOnly: true
+clientAuthenticatorType: client-secret
+clientId: master-realm
+clientScopes:
+  web-origins: true
+  acr: true
+  address: false
+  phone: false
+  profile: true
+  roles: true
+  offline_access: false
+  microprofile-jwt: false
+  basic: true
+  email: true
+consentRequired: null
+description: null
+directAccessGrantsEnabled: null
+enabled: true
+frontchannelLogout: null
+fullScopeAllowed: null
+id: master-realm
+implicitFlowEnabled: null
+managementUrl: null
+multiValueAttributes: {}
+name: master Realm
+nodeReRegistrationTimeout: null
+notBefore: null
+protocol: null
+protocolMappers: []
+publicClient: null
+realmId: master
+redirectUris: []
+registrationToken: null
+rootUrl: null
+scope: []
+scopeMappings: []
+secret: null
+serviceAccountsEnabled: null
+standardFlowEnabled: true
+surrogateAuthRequired: null
+updated: false
+webOrigins: []

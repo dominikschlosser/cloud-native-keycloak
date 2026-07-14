@@ -1,0 +1,18 @@
+attributes:
+  consent.screen.text: ${samlRoleListScopeConsentText}
+  display.on.consent.screen: 'true'
+description: SAML role list
+id: role_list
+name: role_list
+protocol: saml
+protocolMappers:
+- config:
+    single: 'false'
+    attribute.nameformat: Basic
+    attribute.name: Role
+  id: 6eaca812-6fd0-46cd-9c3d-3d4503b788a8
+  isUpdated: false
+  name: role list
+  protocolMapper: saml-role-list-mapper
+realmId: demo
+scopeMappings: []
