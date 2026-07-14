@@ -1,9 +1,9 @@
-# Scenario 5 — filestore (config in YAML files) + PostgreSQL (dynamic)
+# Scenario 5: filestore (config in YAML files) + PostgreSQL (dynamic)
 
 Keycloak 26.7.0 with the
 [filestore](https://github.com/dominikschlosser/keycloak-extension-filestore) datastore extension.
 Configuration entities (realms, clients, client scopes, roles, groups, identity providers) are read
-from **YAML files on disk**; users and sessions live in **PostgreSQL**. The files are your
+from **YAML files on disk**. Users and sessions live in **PostgreSQL**. The files are your
 version-controlled source of truth, typically mounted read-only (a ConfigMap, or here baked into the
 image).
 
@@ -30,10 +30,10 @@ never load.
 
 filestore config is **per-pod** (there is no shared API like k8store's CRs), so the topology differs:
 
-- **new** — one replica, writable filestore on a `PersistentVolumeClaim`. A single replica avoids a
+- **new**: one replica, writable filestore on a `PersistentVolumeClaim`. A single replica avoids a
   split brain across pods, and the volume keeps the master realm (and its role ids) consistent with
   the admin user and role mappings that live in PostgreSQL across restarts.
-- **--preconfigured** — the committed `config/filestore/` is baked into the image as a read-only
+- **--preconfigured**: the committed `config/filestore/` is baked into the image as a read-only
   seed, identical on every pod, so it runs two replicas pinned to separate workers.
 
 ## Organizations

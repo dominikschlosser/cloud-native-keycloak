@@ -1,10 +1,10 @@
-# Scenario 2 — Terraform provider + PostgreSQL
+# Scenario 2: Terraform provider + PostgreSQL
 
 Stock Keycloak 26.7.0 (no datastore extension) with PostgreSQL and the `stateless` feature, where the
 configuration is managed by the
 [keycloak/keycloak](https://registry.terraform.io/providers/keycloak/keycloak/latest) **Terraform
 provider**. Realms, clients, client scopes and roles are declared as Terraform resources in
-`config/main.tf`; the provider applies them through the Keycloak admin API. Dynamic data (users,
+`config/main.tf`. The provider applies them through the Keycloak admin API. Dynamic data (users,
 sessions) lives in the database.
 
 ## How it works

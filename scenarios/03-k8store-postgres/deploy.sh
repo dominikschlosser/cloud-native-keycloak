@@ -40,24 +40,33 @@ docker push -q "${IMAGE}"
 ${KUBECTL} get ns "${NS}" >/dev/null 2>&1 || ${KUBECTL} create ns "${NS}"
 log "Applying k8store CRDs (published bundle, ${K8STORE_VERSION})"
 ${KUBECTL} apply --server-side -f "${CRDS_URL}" >/dev/null
-log "Applying RBAC, PostgreSQL and Keycloak"
+log "Applying RBAC and PostgreSQL"
 ${KUBECTL} apply -f manifests/00-rbac.yaml
 apply_db "${NS}" postgres
-${KUBECTL} apply -f manifests/10-keycloak.yaml
 
-# A fresh database always boots in write mode so Keycloak can bootstrap the master realm.
-${KUBECTL} -n "${NS}" set env deployment/keycloak KC_SPI_DATASTORE__K8STORE__READ_ONLY=false
+if [ "${PRECONFIGURED}" = true ]; then
+  # GitOps: all config (master + demo realms) is applied as CRs up front and Keycloak boots
+  # read-only from the start, so the CRs are the single source of truth. The admin user is
+  # seeded by the Job (KC_BOOTSTRAP_ADMIN does not fire when master already exists).
+  READ_ONLY=true
+  log "Applying version-controlled CRs (master + demo realms)"
+  ${KUBECTL} -n "${NS}" apply -f config/
+else
+  # Empty instance: boot writable so Keycloak bootstraps the master realm and the admin.
+  READ_ONLY=false
+fi
+
+${KUBECTL} apply -f manifests/10-keycloak.yaml
+${KUBECTL} -n "${NS}" set env deployment/keycloak "KC_SPI_DATASTORE__K8STORE__READ_ONLY=${READ_ONLY}"
 ${KUBECTL} -n "${NS}" rollout restart deployment/keycloak
 wait_rollout "${NS}" deployment/postgres 300s
 wait_rollout "${NS}" deployment/keycloak 600s
 
 if [ "${PRECONFIGURED}" = true ]; then
-  log "Applying version-controlled demo realm CRs"
-  ${KUBECTL} -n "${NS}" apply -f config/
-  log "Switching to read-only mode (GitOps: CRs are the source of truth)"
-  ${KUBECTL} -n "${NS}" set env deployment/keycloak KC_SPI_DATASTORE__K8STORE__READ_ONLY=true
-  ${KUBECTL} -n "${NS}" rollout restart deployment/keycloak
-  wait_rollout "${NS}" deployment/keycloak 600s
+  log "Seeding admin user for the pre-existing master realm"
+  ${KUBECTL} -n "${NS}" delete job/bootstrap-admin --ignore-not-found >/dev/null 2>&1 || true
+  ${KUBECTL} apply -f manifests/bootstrap-admin-job.yaml
+  ${KUBECTL} -n "${NS}" wait --for=condition=complete job/bootstrap-admin --timeout=180s
 fi
 
 ${KUBECTL} -n "${NS}" get pods -o wide

@@ -1,8 +1,8 @@
-# Scenario 3 — k8store (config in CRs) + PostgreSQL (dynamic)
+# Scenario 3: k8store (config in CRs) + PostgreSQL (dynamic)
 
 Keycloak 26.7.0 with the [k8store](https://github.com/dominikschlosser/keycloak-k8store) datastore
 extension. Configuration entities (realms, clients, client scopes, roles, groups, identity
-providers) live as **Kubernetes Custom Resources**; users and sessions live in **PostgreSQL**. This
+providers) live as **Kubernetes Custom Resources**. Users and sessions live in **PostgreSQL**. This
 is the GitOps pattern: the CRs are your version-controlled source of truth and Keycloak serves them.
 
 ## How it works
@@ -52,15 +52,20 @@ the two Keycloak replicas.
 
 ## The version-controlled config (`config/`)
 
-The demo realm was bootstrapped once in write mode, then the CRs Keycloak materialized were exported
-and committed (the workflow k8store recommends). `config/` holds:
+Bootstrapped once in write mode, then the CRs Keycloak materialized were exported and committed (the
+workflow k8store recommends). `config/` holds the **`master` and `demo` realms** in full:
+`realms.yaml`, `clients.yaml`, `client-scopes.yaml`, `roles.yaml`. Committing the whole master realm
+(not just the demo realm) is what lets Keycloak boot read-only with nothing pre-existing in the
+database.
 
-- `realm.yaml`, `clients.yaml`, `client-scopes.yaml`, `roles.yaml` — the `demo` realm.
-- `master-demo-realm-client.yaml`, `master-demo-realm-roles.yaml` — the `demo-realm` management
-  client and admin roles that live in the **master** realm. Keycloak needs these to administer the
-  demo realm, so a read-only instance that layers the demo realm onto a freshly bootstrapped master
-  must carry them too.
+### new vs pre-configured
 
-`deploy.sh --preconfigured` applies `config/`, then flips the deployment to read-only so the CRs
-become the single source of truth. Edit a CR and `kubectl apply` it (or let your GitOps controller do
-it) and every replica serves the change within milliseconds, no restart.
+- **new**: empty writable instance. Keycloak boots in write mode against an empty store, bootstraps
+  the master realm and, because master is created right then, `KC_BOOTSTRAP_ADMIN` seeds the admin.
+- **--preconfigured**: the GitOps pattern. All CRs are applied up front and Keycloak boots
+  **read-only from the start**, so the committed CRs are the single source of truth (config writes
+  through Keycloak are rejected). Because master already exists, `KC_BOOTSTRAP_ADMIN` does not fire,
+  so a one-shot `bootstrap-admin` Job seeds the admin user (a dynamic entity) into the database.
+
+This mirrors an ArgoCD-style deployment (apply Keycloak + CRs together, run read-only). Edit a CR and
+`kubectl apply` it. Every replica serves the change within milliseconds, no restart.

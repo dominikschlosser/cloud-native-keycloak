@@ -1,4 +1,4 @@
-# Scenario 6 — filestore (config in YAML files) + Cassandra (dynamic)
+# Scenario 6: filestore (config in YAML files) + Cassandra (dynamic)
 
 Keycloak 26.7.0 running **fully database-free**:
 [filestore](https://github.com/dominikschlosser/keycloak-extension-filestore) serves the
@@ -28,16 +28,16 @@ database, see [scenario 5](../05-filestore-postgres)).
 
 ### Cassandra driver config
 
-`lib/cassandra-application.conf` holds the Cassandra driver configuration; it is baked into the image
+`lib/cassandra-application.conf` holds the Cassandra driver configuration. It is baked into the image
 and loaded with `-Dconfig.file`. Edit it for driver tuning (consistency, timeouts).
 
 ## Two variants, two topologies
 
 Like [scenario 5](../05-filestore-postgres), filestore config is per-pod:
 
-- **new** — one replica, writable filestore on a PVC, `KC_BOOTSTRAP_ADMIN` seeds the admin (in
+- **new**: one replica, writable filestore on a PVC, `KC_BOOTSTRAP_ADMIN` seeds the admin (in
   Cassandra).
-- **--preconfigured** — the committed `config/filestore/` is baked into the image as a read-only
+- **--preconfigured**: the committed `config/filestore/` is baked into the image as a read-only
   seed, two replicas. Because the seed already contains the master realm, a one-shot Job runs
   `kc.sh bootstrap-admin` to seed the admin into Cassandra. The seed disables the `VERIFY_PROFILE`
   required action so that admin (which has no email) can log in.

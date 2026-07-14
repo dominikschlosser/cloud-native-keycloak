@@ -1,4 +1,4 @@
-# Scenario 1 — standard Keycloak, Operator + stateless feature + PostgreSQL
+# Scenario 1: standard Keycloak, Operator + stateless feature + PostgreSQL
 
 Stock Keycloak 26.7.0 managed by the official **Keycloak Operator**, running with the `stateless`
 feature and a PostgreSQL database. No datastore extension and no custom image. This is the reference
@@ -50,9 +50,9 @@ feature.
 ../../test/verify.sh kc-01 demo   demo-app                 # pre-configured
 ```
 
-The operator creates a ClusterIP Service (`keycloak-service`); `manifests/20-keycloak-nodeport.yaml`
-adds a NodePort Service named `keycloak` selecting the same pods, so `http://localhost:8080` works and
-`test/verify.sh` finds the Service under its default name.
+The operator creates a ClusterIP Service (`keycloak-service`). `manifests/20-keycloak-nodeport.yaml`
+adds a NodePort Service named `keycloak` selecting the same pods (so `http://localhost:8080` works and
+`test/verify.sh` finds it under the default Service name).
 
 ## The version-controlled config (`config/realm-demo.yaml`)
 

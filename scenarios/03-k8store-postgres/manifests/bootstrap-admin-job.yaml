@@ -1,0 +1,43 @@
+# The pre-configured instance boots read-only with the master realm already present as CRs,
+# so KC_BOOTSTRAP_ADMIN never fires and no admin user exists. This one-shot Job seeds an admin
+# user into the database for the pre-existing realm. It uses the keycloak ServiceAccount so its
+# k8store backend can read the CRs, and runs in its own pod so its transient management
+# interface does not collide with the server on 9000.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: bootstrap-admin
+  namespace: kc-03
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app: keycloak-bootstrap-admin
+    spec:
+      restartPolicy: Never
+      serviceAccountName: keycloak
+      containers:
+        - name: bootstrap-admin
+          image: localhost:5001/cnk-03:dev
+          imagePullPolicy: Always
+          args:
+            - bootstrap-admin
+            - user
+            - --username
+            - admin
+            - --password:env
+            - KC_BOOTSTRAP_ADMIN_PASSWORD
+            - --no-prompt
+            - --optimized
+          env:
+            - name: KC_DB_URL
+              value: jdbc:postgresql://postgres:5432/keycloak
+            - name: KC_DB_USERNAME
+              value: keycloak
+            - name: KC_DB_PASSWORD
+              value: keycloak
+            - name: KC_SPI_DATASTORE__K8STORE__READ_ONLY
+              value: "true"
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              value: admin

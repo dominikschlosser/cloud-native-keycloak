@@ -1,4 +1,4 @@
-# Scenario 4 — k8store (config in CRs) + Cassandra (dynamic)
+# Scenario 4: k8store (config in CRs) + Cassandra (dynamic)
 
 Keycloak 26.7.0 running **fully database-free**:
 [k8store](https://github.com/dominikschlosser/keycloak-k8store) serves the configuration entities as
@@ -24,7 +24,7 @@ k8store would otherwise use. Nothing uses JPA, so JPA legacy is turned off.
 
 ### Cassandra driver config
 
-`lib/cassandra-application.conf` holds the Cassandra driver configuration; it is baked into the image
+`lib/cassandra-application.conf` holds the Cassandra driver configuration. It is baked into the image
 and loaded with `-Dconfig.file`. Edit it for driver tuning (consistency, timeouts).
 
 ## Organizations
@@ -53,7 +53,8 @@ Cassandra takes ~60-90s to become ready, so the first deploy is slower than the 
 
 ## The version-controlled config (`config/`)
 
-The same k8store CR set as [scenario 3](../03-k8store-postgres) (the `demo` realm plus the master-side
-management client and roles needed to administer it). `deploy.sh --preconfigured` applies `config/`
-and switches to read-only mode so the CRs are the single source of truth. Editing a CR and
-`kubectl apply`-ing it updates every replica within milliseconds, no restart.
+The same full-realm k8store CR set as [scenario 3](../03-k8store-postgres) (`master` and `demo`
+realms). Same two variants: **new** boots writable and `KC_BOOTSTRAP_ADMIN` seeds the admin;
+**--preconfigured** applies all CRs up front, boots **read-only from the start**, and a one-shot
+`bootstrap-admin` Job seeds the admin into Cassandra. Editing a CR and `kubectl apply`-ing it updates
+every replica within milliseconds, no restart.
