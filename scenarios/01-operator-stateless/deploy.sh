@@ -8,7 +8,8 @@
 #                    Organization, which only this scenario supports)
 #
 # This scenario uses no custom image. Config is version-controlled as a KeycloakRealmImport
-# CR and materialized by the operator's import Job.
+# CR (realm, Admin API v1) and a KeycloakOIDCClient CR (a client, Admin API v2), both
+# reconciled by the operator.
 set -euo pipefail
 cd "$(dirname "$0")"
 source ../../lib/common.sh
@@ -48,9 +49,20 @@ log "Waiting for the operator to roll out Keycloak (StatefulSet keycloak)"
 ${KUBECTL} -n "${NS}" wait --for=condition=Ready keycloak/keycloak --timeout=600s
 
 if [ "${PRECONFIGURED}" = true ]; then
-  log "Importing the version-controlled demo realm"
+  log "Importing the version-controlled demo realm (KeycloakRealmImport, Admin API v1)"
   ${KUBECTL} apply -f config/realm-demo.yaml
   ${KUBECTL} -n "${NS}" wait --for=condition=Done keycloakrealmimport/demo --timeout=300s
+  log "Managing a client declaratively (KeycloakOIDCClient, Admin API v2)"
+  ${KUBECTL} apply -f config/client-demo-oidc.yaml
+  # The KeycloakOIDCClient reports a HasErrors condition (not Ready). Poll until it reconciles clean.
+  status=""
+  for _ in $(seq 1 36); do
+    status=$(${KUBECTL} -n "${NS}" get keycloakoidcclient/demo-oidc-app \
+      -o jsonpath='{.status.conditions[?(@.type=="HasErrors")].status}' 2>/dev/null || true)
+    [ "${status}" = "False" ] && break
+    sleep 5
+  done
+  [ "${status}" = "False" ] || die "KeycloakOIDCClient demo-oidc-app did not reconcile: $(${KUBECTL} -n "${NS}" get keycloakoidcclient/demo-oidc-app -o jsonpath='{.status.conditions[?(@.type=="HasErrors")].message}')"
 fi
 
 ${KUBECTL} -n "${NS}" get pods -o wide

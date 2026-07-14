@@ -17,9 +17,12 @@ spec:
       key: password
   # stateless keeps only an embedded local cache and moves session/auth state to the
   # database, which is the cloud-native (no external Infinispan) operating mode.
+  # client-admin-api:v2 enables the new Admin API v2 so the operator can manage clients
+  # declaratively through KeycloakOIDCClient / KeycloakSAMLClient CRs.
   features:
     enabled:
       - stateless
+      - client-admin-api:v2
   http:
     httpEnabled: true
   hostname:
@@ -29,4 +32,8 @@ spec:
     enabled: false
   bootstrapAdmin:
     user:
+      secret: keycloak-admin
+    # Service account the operator uses to reach the Admin API v2 for KeycloakOIDCClient
+    # reconciliation (client-id/client-secret keys of the same secret).
+    service:
       secret: keycloak-admin

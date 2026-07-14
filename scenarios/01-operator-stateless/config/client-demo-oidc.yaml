@@ -1,0 +1,21 @@
+# Version-controlled client configuration managed by the operator through Admin API v2 (new
+# in 26.7.0). Unlike the realm import (Admin API v1), this reconciles a single client
+# declaratively. The client id is the CR metadata.name. It targets the demo realm that the
+# KeycloakRealmImport creates.
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: KeycloakOIDCClient
+metadata:
+  name: demo-oidc-app
+  namespace: kc-01
+spec:
+  keycloakCRName: keycloak
+  realm: demo
+  client:
+    enabled: true
+    displayName: Demo OIDC app (operator-managed via Admin API v2)
+    loginFlows:
+      - STANDARD
+    redirectUris:
+      - https://demo-oidc-app.example.com/*
+    webOrigins:
+      - "+"

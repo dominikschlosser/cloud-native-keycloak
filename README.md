@@ -20,7 +20,7 @@ CRs or YAML files Keycloak reads are the committed files themselves.
 
 | # | Scenario | Config store | Dynamic store | Relational DB | Organizations | Config as |
 |---|---|---|---|:-------------:|:---:|---|
-| 1 | [operator-stateless](scenarios/01-operator-stateless) | PostgreSQL | PostgreSQL |      yes      | yes | `KeycloakRealmImport` CR |
+| 1 | [operator-stateless](scenarios/01-operator-stateless) | PostgreSQL | PostgreSQL |      yes      | yes | `KeycloakRealmImport` + `KeycloakOIDCClient` CRs |
 | 2 | [terraform](scenarios/02-terraform) | PostgreSQL | PostgreSQL |      yes      | yes | Terraform HCL |
 | 3 | [keycloak-config-cli](scenarios/03-keycloak-config-cli) | PostgreSQL | PostgreSQL |      yes      | yes | realm config YAML |
 | 4 | [k8store-postgres](scenarios/04-k8store-postgres) | Kubernetes CRs | PostgreSQL |      yes      | no | k8store CR manifests |
