@@ -2,9 +2,11 @@
 
 Stock Keycloak 26.7.0 (no datastore extension) with PostgreSQL and the `stateless` feature, where the
 configuration is managed by [keycloak-config-cli](https://github.com/adorsys/keycloak-config-cli).
-The config is a Keycloak realm representation in `config/demo-realm.yaml` (the same shape as a realm
-export). A one-shot Job imports it through the admin API and keeps the realm reconciled to the file.
-Dynamic data (users, sessions) lives in the database.
+The config in `config/demo-realm.yaml` is based on Keycloak's realm export format and extends it
+(variable substitution, managed and purge strategies). It manages the whole realm and everything in it
+(clients, roles, client scopes, authentication flows, identity providers, users), and it can manage
+multiple realms. A one-shot Job imports it through the admin API and keeps Keycloak reconciled to the
+files. Dynamic data (users, sessions) lives in the database.
 
 ## How it works
 
@@ -21,9 +23,9 @@ KEYCLOAK_USER=admin / KEYCLOAK_PASSWORD=admin
 IMPORT_FILES_LOCATIONS=/config/*.yaml
 ```
 
-Re-running the Job reconciles the live realm back to the committed file, so this is declarative config
-management like [scenario 2](../02-terraform), using Keycloak's own realm representation instead of a
-provider's resource model.
+Re-running the Job reconciles the live config back to the committed files, so this is declarative
+config management like [scenario 2](../02-terraform), using Keycloak's realm config format instead of
+a provider's resource model.
 
 ## Organizations
 

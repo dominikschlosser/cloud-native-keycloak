@@ -22,7 +22,7 @@ CRs or YAML files Keycloak reads are the committed files themselves.
 |---|---|---|---|:-------------:|:---:|---|
 | 1 | [operator-stateless](scenarios/01-operator-stateless) | PostgreSQL | PostgreSQL |      yes      | yes | `KeycloakRealmImport` CR |
 | 2 | [terraform](scenarios/02-terraform) | PostgreSQL | PostgreSQL |      yes      | yes | Terraform HCL |
-| 3 | [keycloak-config-cli](scenarios/03-keycloak-config-cli) | PostgreSQL | PostgreSQL |      yes      | yes | realm representation YAML |
+| 3 | [keycloak-config-cli](scenarios/03-keycloak-config-cli) | PostgreSQL | PostgreSQL |      yes      | yes | realm config YAML |
 | 4 | [k8store-postgres](scenarios/04-k8store-postgres) | Kubernetes CRs | PostgreSQL |      yes      | no | k8store CR manifests |
 | 5 | [k8store-cassandra](scenarios/05-k8store-cassandra) | Kubernetes CRs | Cassandra |      no       | no | k8store CR manifests |
 | 6 | [filestore-postgres](scenarios/06-filestore-postgres) | YAML files | PostgreSQL |      yes      | no | filestore YAML files |
@@ -129,8 +129,10 @@ Factual characteristics per scenario, along the dimensions that distinguish them
 - **Applying changes:** edit the realm file and re-run the config-cli Job. It reconciles the realm to
   the file.
 - **Backup/restore:** back up the database. The realm file reproduces the imported config.
-- **Config surface:** Keycloak's realm representation (the same shape as a realm export), so
-  realm-level config is complete. It applies whole realms rather than individual resources.
+- **Config surface:** the config is based on Keycloak's realm export format and extends it (variable
+  substitution, managed and purge strategies, merge behaviors). One file manages a whole realm and
+  everything in it (clients, roles, client scopes, authentication flows, identity providers, users),
+  and it can manage multiple realms.
 - **Re-sync reliability:** config-cli applies through the Admin REST API v1. Re-running can delete and
   recreate resources it does not diff finely (authentication flows have caused login errors during
   provisioning, adorsys/keycloak-config-cli#875), sometimes needing a DB fix or a reset and re-import.
