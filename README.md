@@ -200,9 +200,23 @@ exported and committed, which is the workflow those stores recommend.
 ## GitOps with ArgoCD
 
 The `--preconfigured` scenarios apply their config with a script. [`argocd/`](argocd) runs the same
-k8store + PostgreSQL setup through **ArgoCD** instead (the production pattern). ArgoCD syncs Keycloak
-and the CRs from an in-cluster git server. Keycloak boots read-only, and a PostSync hook Job seeds the
-admin. Run `argocd/setup.sh` (see [argocd/README.md](argocd/README.md)).
+k8store + PostgreSQL setup through **ArgoCD** instead. ArgoCD syncs Keycloak and the CRs from an
+in-cluster git server. Keycloak boots read-only, and a PostSync hook Job seeds the admin.
+
+```bash
+argocd/setup.sh                              # ArgoCD + git server + the synced Application
+
+# change config the GitOps way: clone the repo, edit a CR, push
+kubectl -n argocd port-forward svc/git-server 9418:9418 &
+git clone git://localhost:9418/repo /tmp/keycloak-gitops
+# edit /tmp/keycloak-gitops/config/realms.yaml (for example the demo realm displayName), then:
+cd /tmp/keycloak-gitops && git commit -am "update demo realm" && git push origin main
+```
+
+ArgoCD reconciles the commit and Keycloak serves the change with no restart (force it immediately
+with `kubectl -n argocd annotate application keycloak-k8store argocd.argoproj.io/refresh=hard
+--overwrite`). The ArgoCD UI is at `https://localhost:8081` (admin/admin) via
+`kubectl -n argocd port-forward svc/argocd-server 8081:443`. See [argocd/README.md](argocd/README.md).
 
 ## Requirements
 
