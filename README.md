@@ -11,7 +11,7 @@ All six run Keycloak with the `stateless` feature (no external Infinispan). What
 **dynamic data** (users, sessions) is stored. Configuration is always version-controlled. Dynamic
 data always lives in a database.
 
-One distinction runs through everything below. In **scenarios 1 and 2 the git artifact is applied
+One distinction is where the config data lives: In **scenarios 1 and 2 the git artifact is applied
 into the database**. The live configuration store is PostgreSQL. The CR (or HCL) is desired state
 that a controller reconciles into it. In **scenarios 3-6 the git artifact is the store**. The CRs or
 YAML files Keycloak reads are the committed files themselves.
@@ -27,11 +27,11 @@ YAML files Keycloak reads are the committed files themselves.
 | 5 | [filestore-postgres](scenarios/05-filestore-postgres) | YAML files | PostgreSQL | no | no | filestore YAML files |
 | 6 | [filestore-cassandra](scenarios/06-filestore-cassandra) | YAML files | Cassandra | yes | no | filestore YAML files |
 
-Scenarios 3-6 use community datastore extensions pulled from Maven Central:
-[k8store](https://github.com/dominikschlosser/keycloak-k8store) `0.1.5`,
-[keycloak-cassandra-extension](https://github.com/opdt/keycloak-cassandra-extension) `6.0.0`, and
-[keycloak-extension-filestore](https://github.com/dominikschlosser/keycloak-extension-filestore)
-`3.0.0`. Each selects a datastore (`--spi-datastore--provider=...`) and self-configures the rest.
+Scenarios 3-6 use community datastore extensions:
+[k8store](https://github.com/dominikschlosser/keycloak-k8store),
+[keycloak-cassandra-extension](https://github.com/opdt/keycloak-cassandra-extension), and
+[keycloak-extension-filestore](https://github.com/dominikschlosser/keycloak-extension-filestore). 
+Each selects a datastore (`--spi-datastore--provider=...`) and self-configures the rest.
 Scenarios 1 and 2 use unmodified upstream Keycloak.
 
 ## Organizations
@@ -144,7 +144,7 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   (`cassandra-migration`). No relational database.
 - **Requires:** the k8store CRDs and RBAC, Cassandra, and the driver `application.conf` (see the
   scenario README). No Organizations.
-- **When to use:** you want CR-based GitOps config and a database-free dynamic store that spans datacenters (active-active).
+- **When to use:** you want CR-based GitOps config and a dynamic store that spans datacenters (active-active)... or already use Cassandra, for example in a 2 datacenter setup.
 
 ### 5 · filestore-postgres
 - **Config lives in:** YAML files, baked into the image (read-only variant) or on a per-pod volume
@@ -173,19 +173,18 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   database.
 - **Requires:** Cassandra and the driver `application.conf`. No Organizations. Writable variant is
   single-replica.
-- **When to use:** you want file-based config and a fully database-free, multi-datacenter dynamic store.
+- **When to use:** you want file-based config and a fully database-free, multi-datacenter dynamic store (or already use Cassandra, for example in a 2 datacenter setup).
 
-### Zero-downtime upgrades (what makes them work)
+### Zero-downtime upgrades
 
-All six run with `stateless`, so user sessions live in the datastore (database, CRs, or Cassandra),
+All six scenarios run with `stateless`, so user sessions live in the datastore (database, CRs, or Cassandra),
 not in an embedded Infinispan cache. Pod replacement during a rolling update therefore does not drop
 sessions, which is the precondition for a zero-downtime version upgrade. The two-replica scenarios
 keep at least one Ready replica serving through the Service during the roll (`maxUnavailable: 1`,
 `maxSurge: 0`). The single-replica writable filestore variant is the exception. This is verified by
 sending continuous requests through the Service during a `rollout restart`
 (`test/rollout-availability.sh`) and observing no failed requests. Cross-version compatibility
-(schema, CR, or file migrations between two Keycloak versions) is per-store as noted above. This repo
-pins 26.7.0 and does not exercise it.
+(schema, CR, or file migrations between two Keycloak versions) is per-store.
 
 ## How config is version-controlled per scenario
 
@@ -197,6 +196,13 @@ pins 26.7.0 and does not exercise it.
 
 For scenarios 3-6 the demo realm was bootstrapped once in write mode. Its materialized config was
 exported and committed, which is the workflow those stores recommend.
+
+## GitOps with ArgoCD
+
+The `--preconfigured` scenarios apply their config with a script. [`argocd/`](argocd) runs the same
+k8store + PostgreSQL setup through **ArgoCD** instead (the production pattern). ArgoCD syncs Keycloak
+and the CRs from an in-cluster git server. Keycloak boots read-only, and a PostSync hook Job seeds the
+admin. Run `argocd/setup.sh` (see [argocd/README.md](argocd/README.md)).
 
 ## Requirements
 

@@ -1,0 +1,1278 @@
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.acr
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  attributes:
+    display.on.consent.screen: 'false'
+    include.in.token.scope: 'false'
+  description: OpenID Connect scope for add acr (authentication context class reference) to the token
+  id: acr
+  name: acr
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+      consentRequired: false
+      id: b3d91412-a001-4572-849d-bb56114677cf
+      name: acr loa level
+      protocol: openid-connect
+      protocolMapper: oidc-acr-mapper
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.address
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  attributes:
+    consent.screen.text: ${addressScopeConsentText}
+    display.on.consent.screen: 'true'
+    include.in.token.scope: 'true'
+  description: 'OpenID Connect built-in scope: address'
+  id: address
+  name: address
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        user.attribute.country: country
+        user.attribute.formatted: formatted
+        user.attribute.locality: locality
+        user.attribute.postal_code: postal_code
+        user.attribute.region: region
+        user.attribute.street: street
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: d841b135-05b2-4fb4-b2a5-ca9fc3a91e73
+      name: address
+      protocol: openid-connect
+      protocolMapper: oidc-address-mapper
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.authncontextclassref-d71eff8f
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  description: AuthnContextClassRef Level of Authentiation
+  id: AuthnContextClassRef
+  name: AuthnContextClassRef
+  protocol: saml
+  protocolMappers:
+    - config: {}
+      consentRequired: false
+      id: 587f010e-6c62-49f8-9da8-29e6e4dad4f7
+      name: AuthnContextClassRef
+      protocol: saml
+      protocolMapper: saml-authn-context-class-ref-mapper
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.basic
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  attributes:
+    display.on.consent.screen: 'false'
+    include.in.token.scope: 'false'
+  description: OpenID Connect scope for add all basic claims to the token
+  id: basic
+  name: basic
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: auth_time
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: long
+        user.session.note: AUTH_TIME
+      consentRequired: false
+      id: 52215141-9548-48e0-85eb-74dac7a04ec9
+      name: auth_time
+      protocol: openid-connect
+      protocolMapper: oidc-usersessionmodel-note-mapper
+    - config:
+        access.token.claim: 'true'
+        introspection.token.claim: 'true'
+      consentRequired: false
+      id: d0f53188-ed7d-4b18-9023-f144515b186a
+      name: sub
+      protocol: openid-connect
+      protocolMapper: oidc-sub-mapper
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.demo-scope
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  attributes:
+    display.on.consent.screen: 'true'
+    include.in.token.scope: 'true'
+  description: Demo client scope
+  id: demo-scope
+  name: demo-scope
+  protocol: openid-connect
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.email
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  attributes:
+    consent.screen.text: ${emailScopeConsentText}
+    display.on.consent.screen: 'true'
+    include.in.token.scope: 'true'
+  description: 'OpenID Connect built-in scope: email'
+  id: email
+  name: email
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: email
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: email
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: b4f684a9-5093-4a12-8c13-801d5cb9b1c0
+      name: email
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: email_verified
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: boolean
+        user.attribute: emailVerified
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 06f0c50c-2499-48ce-8861-37c506935284
+      name: email verified
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-property-mapper
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.microprofile-jwt
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  attributes:
+    display.on.consent.screen: 'false'
+    include.in.token.scope: 'true'
+  description: Microprofile - JWT built-in scope
+  id: microprofile-jwt
+  name: microprofile-jwt
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: upn
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: username
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 58b05b07-104f-4b71-b900-7ebf0f6d4419
+      name: upn
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: groups
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        multivalued: 'true'
+        user.attribute: foo
+      consentRequired: false
+      id: dfce69ad-b266-4525-964a-c656da01f5c5
+      name: groups
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-realm-role-mapper
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.offline-access-49a76df3
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  attributes:
+    consent.screen.text: ${offlineAccessScopeConsentText}
+    display.on.consent.screen: 'true'
+  description: 'OpenID Connect built-in scope: offline_access'
+  id: offline_access
+  name: offline_access
+  protocol: openid-connect
+  realm: demo
+  realmScopeMappings:
+    - offline_access
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.phone
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  attributes:
+    consent.screen.text: ${phoneScopeConsentText}
+    display.on.consent.screen: 'true'
+    include.in.token.scope: 'true'
+  description: 'OpenID Connect built-in scope: phone'
+  id: phone
+  name: phone
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: phone_number
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: phoneNumber
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: c0fa012c-10fd-4aa3-877e-52419a196df4
+      name: phone number
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: phone_number_verified
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: boolean
+        user.attribute: phoneNumberVerified
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: f185d2b0-c441-44cf-83d3-988fa41ce2f3
+      name: phone number verified
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.profile
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  attributes:
+    consent.screen.text: ${profileScopeConsentText}
+    display.on.consent.screen: 'true'
+    include.in.token.scope: 'true'
+  description: 'OpenID Connect built-in scope: profile'
+  id: profile
+  name: profile
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 03713d2f-e045-4734-97e3-fc8c71a7f68f
+      name: full name
+      protocol: openid-connect
+      protocolMapper: oidc-full-name-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: family_name
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: lastName
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 5e2aaa76-a1b8-4411-b4eb-ca3933b42163
+      name: family name
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: given_name
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: firstName
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 69f9b976-7f99-4713-894f-379bf9feb02e
+      name: given name
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: middle_name
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: middleName
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: ca85d3c8-2f90-41d5-968e-338f76545fc7
+      name: middle name
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: nickname
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: nickname
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 630c7ba8-57bd-452f-b959-d67bff392aff
+      name: nickname
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: preferred_username
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: username
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 00260fb1-52fe-4af5-8702-f613c0d2d2fb
+      name: username
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: profile
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: profile
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 8a48ca4c-7ae0-463d-8918-781a321c29c4
+      name: profile
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: picture
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: picture
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 1147e058-6f4f-4a68-934d-5d20ab0d7f74
+      name: picture
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: website
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: website
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 8498d2bd-67a8-4203-9488-01027639cdbd
+      name: website
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: gender
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: gender
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: aafc72df-237b-4b86-9831-22f379986634
+      name: gender
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: birthdate
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: birthdate
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: c6eb4d8d-34c3-4796-af1c-87025e887b12
+      name: birthdate
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: zoneinfo
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: zoneinfo
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 142cd0d8-397e-4e43-8b3d-516b227f948c
+      name: zoneinfo
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: locale
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: locale
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 4ea9687c-0fc5-46c7-bdbf-69d9cabf41b9
+      name: locale
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: updated_at
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: long
+        user.attribute: updatedAt
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 0a6d8c77-d63f-4fae-92d5-b40e99c2470e
+      name: updated at
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.role-list-27c196c3
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  attributes:
+    consent.screen.text: ${samlRoleListScopeConsentText}
+    display.on.consent.screen: 'true'
+  description: SAML role list
+  id: role_list
+  name: role_list
+  protocol: saml
+  protocolMappers:
+    - config:
+        attribute.name: Role
+        attribute.nameformat: Basic
+        single: 'false'
+      consentRequired: false
+      id: 7cda0160-6f59-42f3-9fb2-6a085a3550e0
+      name: role list
+      protocol: saml
+      protocolMapper: saml-role-list-mapper
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.roles
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  attributes:
+    consent.screen.text: ${rolesScopeConsentText}
+    display.on.consent.screen: 'true'
+    include.in.token.scope: 'false'
+  description: OpenID Connect scope for add user roles to the access token
+  id: roles
+  name: roles
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: realm_access.roles
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        multivalued: 'true'
+        user.attribute: foo
+      consentRequired: false
+      id: 979af2e8-d452-445c-a3a1-20bfbb239f9a
+      name: realm roles
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-realm-role-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: resource_access.${client_id}.roles
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        multivalued: 'true'
+        user.attribute: foo
+      consentRequired: false
+      id: b1621505-7b29-4fb2-b15d-efa4e018d23a
+      name: client roles
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-client-role-mapper
+    - config:
+        access.token.claim: 'true'
+        introspection.token.claim: 'true'
+      consentRequired: false
+      id: 09802b88-fd45-4010-9364-c22a7035ddeb
+      name: audience resolve
+      protocol: openid-connect
+      protocolMapper: oidc-audience-resolve-mapper
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.service-account-da3bec1e
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  attributes:
+    display.on.consent.screen: 'false'
+    include.in.token.scope: 'false'
+  description: Specific scope for a client enabled for service accounts
+  id: service_account
+  name: service_account
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: client_id
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.session.note: client_id
+      consentRequired: false
+      id: 0ec45816-1fa7-4eb5-8848-3b70015c09b9
+      name: Client ID
+      protocol: openid-connect
+      protocolMapper: oidc-usersessionmodel-note-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: clientHost
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.session.note: clientHost
+      consentRequired: false
+      id: 4c360627-2e5c-4547-97c3-9fe9f475c43f
+      name: Client Host
+      protocol: openid-connect
+      protocolMapper: oidc-usersessionmodel-note-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: clientAddress
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.session.note: clientAddress
+      consentRequired: false
+      id: 2df674bc-ec0d-4766-9bb0-f56e612704ea
+      name: Client IP Address
+      protocol: openid-connect
+      protocolMapper: oidc-usersessionmodel-note-mapper
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: demo.web-origins
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  attributes:
+    consent.screen.text: ''
+    display.on.consent.screen: 'false'
+    include.in.token.scope: 'false'
+  description: OpenID Connect scope for add allowed web origins to the access token
+  id: web-origins
+  name: web-origins
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        introspection.token.claim: 'true'
+      consentRequired: false
+      id: 0d9c9dc8-e243-4609-a78d-40285c928793
+      name: allowed web origins
+      protocol: openid-connect
+      protocolMapper: oidc-allowed-origins-mapper
+  realm: demo
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: master.acr
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  attributes:
+    display.on.consent.screen: 'false'
+    include.in.token.scope: 'false'
+  description: OpenID Connect scope for add acr (authentication context class reference) to the token
+  id: acr
+  name: acr
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+      consentRequired: false
+      id: 983a6caa-c6e2-4412-877c-f1e0cb6ea049
+      name: acr loa level
+      protocol: openid-connect
+      protocolMapper: oidc-acr-mapper
+  realm: master
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: master.address
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  attributes:
+    consent.screen.text: ${addressScopeConsentText}
+    display.on.consent.screen: 'true'
+    include.in.token.scope: 'true'
+  description: 'OpenID Connect built-in scope: address'
+  id: address
+  name: address
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        user.attribute.country: country
+        user.attribute.formatted: formatted
+        user.attribute.locality: locality
+        user.attribute.postal_code: postal_code
+        user.attribute.region: region
+        user.attribute.street: street
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 644ee8bd-a0f1-4dbf-adf6-ab6d874d70cb
+      name: address
+      protocol: openid-connect
+      protocolMapper: oidc-address-mapper
+  realm: master
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: master.authncontextclassref-245a9a74
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  description: AuthnContextClassRef Level of Authentiation
+  id: AuthnContextClassRef
+  name: AuthnContextClassRef
+  protocol: saml
+  protocolMappers:
+    - config: {}
+      consentRequired: false
+      id: 7095976a-5e04-4782-b843-e5f3ba4ff885
+      name: AuthnContextClassRef
+      protocol: saml
+      protocolMapper: saml-authn-context-class-ref-mapper
+  realm: master
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: master.basic
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  attributes:
+    display.on.consent.screen: 'false'
+    include.in.token.scope: 'false'
+  description: OpenID Connect scope for add all basic claims to the token
+  id: basic
+  name: basic
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: auth_time
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: long
+        user.session.note: AUTH_TIME
+      consentRequired: false
+      id: 9d0dedd7-d9e9-491d-8498-2085a91a7031
+      name: auth_time
+      protocol: openid-connect
+      protocolMapper: oidc-usersessionmodel-note-mapper
+    - config:
+        access.token.claim: 'true'
+        introspection.token.claim: 'true'
+      consentRequired: false
+      id: b266601d-769c-4968-bd94-60b48d3e8437
+      name: sub
+      protocol: openid-connect
+      protocolMapper: oidc-sub-mapper
+  realm: master
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: master.email
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  attributes:
+    consent.screen.text: ${emailScopeConsentText}
+    display.on.consent.screen: 'true'
+    include.in.token.scope: 'true'
+  description: 'OpenID Connect built-in scope: email'
+  id: email
+  name: email
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: email
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: email
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 4fca0f05-6e81-41cc-950a-14ffe75c6586
+      name: email
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: email_verified
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: boolean
+        user.attribute: emailVerified
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 11c17704-3128-4814-b45e-4e91c8995312
+      name: email verified
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-property-mapper
+  realm: master
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: master.microprofile-jwt
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  attributes:
+    display.on.consent.screen: 'false'
+    include.in.token.scope: 'true'
+  description: Microprofile - JWT built-in scope
+  id: microprofile-jwt
+  name: microprofile-jwt
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: upn
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: username
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 6a16ae54-d0f9-4789-a137-88f610129d2f
+      name: upn
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: groups
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        multivalued: 'true'
+        user.attribute: foo
+      consentRequired: false
+      id: e0194833-e263-4bea-ba9f-621f75e4a881
+      name: groups
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-realm-role-mapper
+  realm: master
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: master.offline-access-a2ea8f11
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  attributes:
+    consent.screen.text: ${offlineAccessScopeConsentText}
+    display.on.consent.screen: 'true'
+  description: 'OpenID Connect built-in scope: offline_access'
+  id: offline_access
+  name: offline_access
+  protocol: openid-connect
+  realm: master
+  realmScopeMappings:
+    - offline_access
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: master.phone
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  attributes:
+    consent.screen.text: ${phoneScopeConsentText}
+    display.on.consent.screen: 'true'
+    include.in.token.scope: 'true'
+  description: 'OpenID Connect built-in scope: phone'
+  id: phone
+  name: phone
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: phone_number
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: phoneNumber
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: eba4d17f-acb5-4893-b371-5a6e4b4d2823
+      name: phone number
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: phone_number_verified
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: boolean
+        user.attribute: phoneNumberVerified
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: d2c5c78e-04e1-4fd4-ab6e-dd40bc2d4feb
+      name: phone number verified
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+  realm: master
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: master.profile
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  attributes:
+    consent.screen.text: ${profileScopeConsentText}
+    display.on.consent.screen: 'true'
+    include.in.token.scope: 'true'
+  description: 'OpenID Connect built-in scope: profile'
+  id: profile
+  name: profile
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 747540de-7325-4854-b606-ec65be48c9a8
+      name: full name
+      protocol: openid-connect
+      protocolMapper: oidc-full-name-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: family_name
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: lastName
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 70058f32-c0e6-423c-af1a-264561e726c1
+      name: family name
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: given_name
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: firstName
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 014927aa-8d23-4349-8abc-3b1b243e88fa
+      name: given name
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: middle_name
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: middleName
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: af9c8a66-5287-409c-a8d3-519953ddb082
+      name: middle name
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: nickname
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: nickname
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: f998bfa8-89f1-44b6-b593-568118d93065
+      name: nickname
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: preferred_username
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: username
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 57ebbd38-614e-4e26-9834-890ba9d25995
+      name: username
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: profile
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: profile
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 67978d68-32a9-4e9c-9bb8-d7bef06cee5a
+      name: profile
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: picture
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: picture
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 020b935b-d8a7-499b-a99b-ddbf5dc81434
+      name: picture
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: website
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: website
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 6738d488-2013-47c3-8562-c71e51d39f14
+      name: website
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: gender
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: gender
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: c0bf7ce1-9767-4097-bb51-1fa8b0f8aef7
+      name: gender
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: birthdate
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: birthdate
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 18c3165c-7138-48d0-b962-cad99f3c8e61
+      name: birthdate
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: zoneinfo
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: zoneinfo
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: abc7f29d-bd70-4cbc-910d-7b896b48688c
+      name: zoneinfo
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: locale
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: locale
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: ba5fecd3-5840-404f-b5ac-a4bfd5095758
+      name: locale
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: updated_at
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: long
+        user.attribute: updatedAt
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 58da8f04-de0c-4219-b9f5-fc8fafc8c33a
+      name: updated at
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+  realm: master
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: master.role-list-6633b6f9
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  attributes:
+    consent.screen.text: ${samlRoleListScopeConsentText}
+    display.on.consent.screen: 'true'
+  description: SAML role list
+  id: role_list
+  name: role_list
+  protocol: saml
+  protocolMappers:
+    - config:
+        attribute.name: Role
+        attribute.nameformat: Basic
+        single: 'false'
+      consentRequired: false
+      id: 6160ef49-5c63-4ce4-9387-4189080ba9e2
+      name: role list
+      protocol: saml
+      protocolMapper: saml-role-list-mapper
+  realm: master
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: master.roles
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  attributes:
+    consent.screen.text: ${rolesScopeConsentText}
+    display.on.consent.screen: 'true'
+    include.in.token.scope: 'false'
+  description: OpenID Connect scope for add user roles to the access token
+  id: roles
+  name: roles
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: realm_access.roles
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        multivalued: 'true'
+        user.attribute: foo
+      consentRequired: false
+      id: 920f8320-94bf-4317-a1be-19aca970a038
+      name: realm roles
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-realm-role-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: resource_access.${client_id}.roles
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        multivalued: 'true'
+        user.attribute: foo
+      consentRequired: false
+      id: 4fec4c5b-c05b-45c0-b137-803bb55b51f5
+      name: client roles
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-client-role-mapper
+    - config:
+        access.token.claim: 'true'
+        introspection.token.claim: 'true'
+      consentRequired: false
+      id: 8f733b1a-3e7c-4578-a29a-53405917c5ed
+      name: audience resolve
+      protocol: openid-connect
+      protocolMapper: oidc-audience-resolve-mapper
+  realm: master
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: master.service-account-30a55046
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  attributes:
+    display.on.consent.screen: 'false'
+    include.in.token.scope: 'false'
+  description: Specific scope for a client enabled for service accounts
+  id: service_account
+  name: service_account
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: client_id
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.session.note: client_id
+      consentRequired: false
+      id: 983fc823-4b65-4863-9cbe-7e37fb81a58d
+      name: Client ID
+      protocol: openid-connect
+      protocolMapper: oidc-usersessionmodel-note-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: clientHost
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.session.note: clientHost
+      consentRequired: false
+      id: 8374d501-dd09-4997-9668-67f4e570d719
+      name: Client Host
+      protocol: openid-connect
+      protocolMapper: oidc-usersessionmodel-note-mapper
+    - config:
+        access.token.claim: 'true'
+        claim.name: clientAddress
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.session.note: clientAddress
+      consentRequired: false
+      id: 0cde6490-c1f1-4453-aaae-71437d48a1b1
+      name: Client IP Address
+      protocol: openid-connect
+      protocolMapper: oidc-usersessionmodel-note-mapper
+  realm: master
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClientScope
+metadata:
+  name: master.web-origins
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  attributes:
+    consent.screen.text: ''
+    display.on.consent.screen: 'false'
+    include.in.token.scope: 'false'
+  description: OpenID Connect scope for add allowed web origins to the access token
+  id: web-origins
+  name: web-origins
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        introspection.token.claim: 'true'
+      consentRequired: false
+      id: a5745c4c-71c6-4d6f-9724-1ecf0faac13c
+      name: allowed web origins
+      protocol: openid-connect
+      protocolMapper: oidc-allowed-origins-mapper
+  realm: master

@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: kc-argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  labels:
+    app: keycloak
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: keycloak
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      serviceAccountName: keycloak
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: keycloak
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - name: keycloak
+          image: localhost:5001/cnk-03:dev
+          imagePullPolicy: Always
+          # A non-optimized start re-augments in the pod when the k8store env options
+          # change, so the build options are repeated here.
+          args:
+            - start
+            - --db=postgres
+            - --features=stateless
+            - --features-disabled=organization
+            - --spi-datastore--provider=k8store
+            - --health-enabled=true
+            - --metrics-enabled=true
+            - --hostname-strict=false
+            - --http-enabled=true
+          env:
+            - name: KC_DB_URL
+              value: jdbc:postgresql://postgres:5432/keycloak
+            - name: KC_DB_USERNAME
+              value: keycloak
+            - name: KC_DB_PASSWORD
+              value: keycloak
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
+              value: admin
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              value: admin
+            # Read-only is toggled by deploy.sh (write mode for a new instance, read-only
+            # for the pre-configured GitOps instance).
+            - name: KC_SPI_DATASTORE__K8STORE__READ_ONLY
+              value: "true"
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: management
+              containerPort: 9000
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 9000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 36
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 9000
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 12
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: kc-argocd
+  labels:
+    app: keycloak
+spec:
+  # NodePort so the deployed Keycloak is reachable at http://localhost:8080 through the
+  # kind host port mappings (see kind/kind-up.sh), no port-forward needed.
+  type: NodePort
+  selector:
+    app: keycloak
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
+    - name: management
+      port: 9000
+      targetPort: 9000
+      nodePort: 30900

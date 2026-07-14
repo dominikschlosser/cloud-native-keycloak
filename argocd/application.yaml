@@ -1,0 +1,26 @@
+# ArgoCD Application that deploys the k8store + PostgreSQL GitOps setup from the in-cluster
+# git server. ArgoCD applies the Keycloak Deployment (read-only), PostgreSQL, RBAC and the
+# config CRs, then runs the bootstrap-admin Job (a PostSync hook). Editing a CR and pushing
+# to the git server makes ArgoCD reconcile it.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak-k8store
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git://git-server.argocd.svc.cluster.local:9418/repo
+    targetRevision: HEAD
+    path: .
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kc-argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

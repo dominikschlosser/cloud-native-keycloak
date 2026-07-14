@@ -1,0 +1,547 @@
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: demo.account
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  alwaysDisplayInConsole: false
+  attributes:
+    post.logout.redirect.uris: +
+  baseUrl: /realms/demo/account/
+  clientAuthenticatorType: client-secret
+  clientId: account
+  defaultClientScopes:
+    - web-origins
+    - acr
+    - profile
+    - roles
+    - basic
+    - email
+  enabled: true
+  fullScopeAllowed: false
+  id: account
+  name: ${client_account}
+  optionalClientScopes:
+    - address
+    - phone
+    - offline_access
+    - microprofile-jwt
+  protocol: openid-connect
+  publicClient: true
+  realm: demo
+  redirectUris:
+    - /realms/demo/account/*
+  rootUrl: ${authBaseUrl}
+  standardFlowEnabled: true
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: demo.account-console
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  alwaysDisplayInConsole: false
+  attributes:
+    pkce.code.challenge.method: S256
+    post.logout.redirect.uris: +
+  baseUrl: /realms/demo/account/
+  clientAuthenticatorType: client-secret
+  clientId: account-console
+  clientScopeMappings:
+    account:
+      - manage-account
+      - view-groups
+  defaultClientScopes:
+    - web-origins
+    - acr
+    - profile
+    - roles
+    - basic
+    - email
+  directAccessGrantsEnabled: false
+  enabled: true
+  fullScopeAllowed: false
+  id: account-console
+  name: ${client_account-console}
+  optionalClientScopes:
+    - address
+    - phone
+    - offline_access
+    - microprofile-jwt
+  protocol: openid-connect
+  protocolMappers:
+    - config: {}
+      consentRequired: false
+      id: ee709077-3135-4eef-8513-80dee720d263
+      name: audience resolve
+      protocol: openid-connect
+      protocolMapper: oidc-audience-resolve-mapper
+  publicClient: true
+  realm: demo
+  redirectUris:
+    - /realms/demo/account/*
+  rootUrl: ${authBaseUrl}
+  standardFlowEnabled: true
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: demo.admin-cli
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  alwaysDisplayInConsole: false
+  attributes:
+    client.use.lightweight.access.token.enabled: 'true'
+  clientAuthenticatorType: client-secret
+  clientId: admin-cli
+  defaultClientScopes:
+    - web-origins
+    - acr
+    - profile
+    - roles
+    - basic
+    - email
+  directAccessGrantsEnabled: true
+  enabled: true
+  fullScopeAllowed: true
+  id: admin-cli
+  name: ${client_admin-cli}
+  optionalClientScopes:
+    - address
+    - phone
+    - offline_access
+    - microprofile-jwt
+  protocol: openid-connect
+  publicClient: true
+  realm: demo
+  standardFlowEnabled: false
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: demo.broker
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  alwaysDisplayInConsole: false
+  bearerOnly: true
+  clientAuthenticatorType: client-secret
+  clientId: broker
+  defaultClientScopes:
+    - web-origins
+    - acr
+    - profile
+    - roles
+    - basic
+    - email
+  enabled: true
+  fullScopeAllowed: false
+  id: broker
+  name: ${client_broker}
+  optionalClientScopes:
+    - address
+    - phone
+    - offline_access
+    - microprofile-jwt
+  protocol: openid-connect
+  realm: demo
+  standardFlowEnabled: true
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: demo.demo-app
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  alwaysDisplayInConsole: false
+  attributes:
+    backchannel.logout.revoke.offline.tokens: 'false'
+    backchannel.logout.session.required: 'true'
+  bearerOnly: false
+  clientAuthenticatorType: client-secret
+  clientId: demo-app
+  consentRequired: false
+  defaultClientScopes:
+    - web-origins
+    - acr
+    - profile
+    - roles
+    - basic
+    - email
+  directAccessGrantsEnabled: true
+  enabled: true
+  frontchannelLogout: false
+  fullScopeAllowed: true
+  id: demo-app
+  implicitFlowEnabled: false
+  nodeReRegistrationTimeout: -1
+  optionalClientScopes:
+    - address
+    - phone
+    - offline_access
+    - microprofile-jwt
+  protocol: openid-connect
+  publicClient: false
+  realm: demo
+  redirectUris:
+    - https://demo-app.example.com/*
+  secret: demo-secret
+  serviceAccountsEnabled: false
+  standardFlowEnabled: true
+  surrogateAuthRequired: false
+  webOrigins:
+    - +
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: demo.realm-management
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  bearerOnly: true
+  clientAuthenticatorType: client-secret
+  clientId: realm-management
+  defaultClientScopes:
+    - web-origins
+    - acr
+    - profile
+    - roles
+    - basic
+    - email
+  enabled: true
+  fullScopeAllowed: false
+  id: realm-management
+  name: ${client_realm-management}
+  optionalClientScopes:
+    - address
+    - phone
+    - offline_access
+    - microprofile-jwt
+  protocol: openid-connect
+  realm: demo
+  standardFlowEnabled: true
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: demo.security-admin-console
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: demo
+spec:
+  alwaysDisplayInConsole: false
+  attributes:
+    client.use.lightweight.access.token.enabled: 'true'
+    pkce.code.challenge.method: S256
+    post.logout.redirect.uris: +
+  baseUrl: /admin/demo/console/
+  clientAuthenticatorType: client-secret
+  clientId: security-admin-console
+  defaultClientScopes:
+    - web-origins
+    - acr
+    - profile
+    - roles
+    - basic
+    - email
+  enabled: true
+  fullScopeAllowed: true
+  id: security-admin-console
+  name: ${client_security-admin-console}
+  optionalClientScopes:
+    - address
+    - phone
+    - offline_access
+    - microprofile-jwt
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: locale
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: locale
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 650679b4-4a0e-419f-b8ba-066dd0bf1280
+      name: locale
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+  publicClient: true
+  realm: demo
+  redirectUris:
+    - /admin/demo/console/*
+  rootUrl: ${authAdminUrl}
+  standardFlowEnabled: true
+  webOrigins:
+    - +
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: master.account
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  alwaysDisplayInConsole: false
+  attributes:
+    post.logout.redirect.uris: +
+  baseUrl: /realms/master/account/
+  clientAuthenticatorType: client-secret
+  clientId: account
+  defaultClientScopes:
+    - web-origins
+    - acr
+    - profile
+    - roles
+    - basic
+    - email
+  enabled: true
+  fullScopeAllowed: false
+  id: account
+  name: ${client_account}
+  optionalClientScopes:
+    - address
+    - phone
+    - offline_access
+    - microprofile-jwt
+  protocol: openid-connect
+  publicClient: true
+  realm: master
+  redirectUris:
+    - /realms/master/account/*
+  rootUrl: ${authBaseUrl}
+  standardFlowEnabled: true
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: master.account-console
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  alwaysDisplayInConsole: false
+  attributes:
+    pkce.code.challenge.method: S256
+    post.logout.redirect.uris: +
+  baseUrl: /realms/master/account/
+  clientAuthenticatorType: client-secret
+  clientId: account-console
+  clientScopeMappings:
+    account:
+      - manage-account
+      - view-groups
+  defaultClientScopes:
+    - web-origins
+    - acr
+    - profile
+    - roles
+    - basic
+    - email
+  directAccessGrantsEnabled: false
+  enabled: true
+  fullScopeAllowed: false
+  id: account-console
+  name: ${client_account-console}
+  optionalClientScopes:
+    - address
+    - phone
+    - offline_access
+    - microprofile-jwt
+  protocol: openid-connect
+  protocolMappers:
+    - config: {}
+      consentRequired: false
+      id: bd6d15ff-15e7-471f-87bb-77c19134d72f
+      name: audience resolve
+      protocol: openid-connect
+      protocolMapper: oidc-audience-resolve-mapper
+  publicClient: true
+  realm: master
+  redirectUris:
+    - /realms/master/account/*
+  rootUrl: ${authBaseUrl}
+  standardFlowEnabled: true
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: master.admin-cli
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  alwaysDisplayInConsole: false
+  attributes:
+    client.use.lightweight.access.token.enabled: 'true'
+  clientAuthenticatorType: client-secret
+  clientId: admin-cli
+  defaultClientScopes:
+    - web-origins
+    - acr
+    - profile
+    - roles
+    - basic
+    - email
+  directAccessGrantsEnabled: true
+  enabled: true
+  fullScopeAllowed: true
+  id: admin-cli
+  name: ${client_admin-cli}
+  optionalClientScopes:
+    - address
+    - phone
+    - offline_access
+    - microprofile-jwt
+  protocol: openid-connect
+  publicClient: true
+  realm: master
+  standardFlowEnabled: false
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: master.broker
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  alwaysDisplayInConsole: false
+  bearerOnly: true
+  clientAuthenticatorType: client-secret
+  clientId: broker
+  defaultClientScopes:
+    - web-origins
+    - acr
+    - profile
+    - roles
+    - basic
+    - email
+  enabled: true
+  fullScopeAllowed: false
+  id: broker
+  name: ${client_broker}
+  optionalClientScopes:
+    - address
+    - phone
+    - offline_access
+    - microprofile-jwt
+  protocol: openid-connect
+  realm: master
+  standardFlowEnabled: true
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: master.demo-realm
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  bearerOnly: true
+  clientAuthenticatorType: client-secret
+  clientId: demo-realm
+  enabled: true
+  id: demo-realm
+  name: demo Realm
+  realm: master
+  standardFlowEnabled: true
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: master.master-realm
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  bearerOnly: true
+  clientAuthenticatorType: client-secret
+  clientId: master-realm
+  defaultClientScopes:
+    - web-origins
+    - acr
+    - profile
+    - roles
+    - basic
+    - email
+  enabled: true
+  id: master-realm
+  name: master Realm
+  optionalClientScopes:
+    - address
+    - phone
+    - offline_access
+    - microprofile-jwt
+  realm: master
+  standardFlowEnabled: true
+---
+apiVersion: k8store.dominikschlosser.github.io/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: master.security-admin-console
+  labels:
+    k8store.dominikschlosser.github.io/keycloak-version: 26.7.0
+    k8store.dominikschlosser.github.io/realm: master
+spec:
+  alwaysDisplayInConsole: false
+  attributes:
+    client.use.lightweight.access.token.enabled: 'true'
+    pkce.code.challenge.method: S256
+    post.logout.redirect.uris: +
+  baseUrl: /admin/master/console/
+  clientAuthenticatorType: client-secret
+  clientId: security-admin-console
+  defaultClientScopes:
+    - web-origins
+    - acr
+    - profile
+    - roles
+    - basic
+    - email
+  enabled: true
+  fullScopeAllowed: true
+  id: security-admin-console
+  name: ${client_security-admin-console}
+  optionalClientScopes:
+    - address
+    - phone
+    - offline_access
+    - microprofile-jwt
+  protocol: openid-connect
+  protocolMappers:
+    - config:
+        access.token.claim: 'true'
+        claim.name: locale
+        id.token.claim: 'true'
+        introspection.token.claim: 'true'
+        jsonType.label: String
+        user.attribute: locale
+        userinfo.token.claim: 'true'
+      consentRequired: false
+      id: 0eda887b-62e6-4c29-a25c-bcf3a68ae36d
+      name: locale
+      protocol: openid-connect
+      protocolMapper: oidc-usermodel-attribute-mapper
+  publicClient: true
+  realm: master
+  redirectUris:
+    - /admin/master/console/*
+  rootUrl: ${authAdminUrl}
+  standardFlowEnabled: true
+  webOrigins:
+    - +
