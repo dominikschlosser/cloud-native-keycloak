@@ -7,7 +7,7 @@ way you would run it in production. ArgoCD watches a git repo and reconciles the
 It is a deployment method rather than a storage option, so it reuses scenario 4's storage (k8store
 CRs, where ArgoCD actually syncs the config). It has no `new`/`--preconfigured` split.
 
-## What it sets up
+## Setup
 
 - **ArgoCD** in the `argocd` namespace.
 - An **in-cluster git server** (`git-server`, a small `git daemon` image seeded with `app/` at build
@@ -51,7 +51,7 @@ kubectl -n argocd port-forward svc/argocd-server 8081:443
 `setup.sh` sets the admin password to `admin` (demo only). In production leave the generated
 `argocd-initial-admin-secret` password in place, or use SSO.
 
-## Changing config the GitOps way
+## Changing config
 
 The git server holds a real git repo (seeded from `app/` at build time). Change config by pushing a
 commit to it, the same as you would to any remote. ArgoCD reconciles the change and k8store serves it

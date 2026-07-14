@@ -51,7 +51,7 @@ feature.
 ../../test/verify.sh kc-02 demo   demo-app                 # pre-configured instance
 ```
 
-## The version-controlled config (`config/main.tf`)
+## Version-controlled config (`config/main.tf`)
 
 One HCL file declaring the `demo` realm, the `demo-app` client, the `demo-scope` client scope and the
 `demo-role` role. Terraform's plan/apply model means changes are reviewable diffs and the provider

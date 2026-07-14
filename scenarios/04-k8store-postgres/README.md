@@ -50,7 +50,7 @@ the two Keycloak replicas.
 ../../test/verify.sh kc-04 demo   demo-app                 # pre-configured instance
 ```
 
-## The version-controlled config (`config/`)
+## Version-controlled config (`config/`)
 
 Bootstrapped once in write mode, then the CRs Keycloak materialized were exported and committed (the
 workflow k8store recommends). `config/` holds the **`master` and `demo` realms** in full:

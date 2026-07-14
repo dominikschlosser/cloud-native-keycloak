@@ -1,6 +1,6 @@
 # Scenario 7: filestore (config in YAML files) + Cassandra (dynamic)
 
-Keycloak 26.7.0 running **fully database-free**:
+Keycloak 26.7.0 running with **no relational database**:
 [filestore](https://github.com/dominikschlosser/keycloak-extension-filestore) serves the
 configuration entities from YAML files, and the
 [keycloak-cassandra-extension](https://github.com/opdt/keycloak-cassandra-extension) serves the
@@ -31,7 +31,7 @@ database, see [scenario 6](../06-filestore-postgres)).
 `lib/cassandra-application.conf` holds the Cassandra driver configuration. It is baked into the image
 and loaded with `-Dconfig.file`. Edit it for driver tuning (consistency, timeouts).
 
-## Two variants, two topologies
+## Variants
 
 Like [scenario 6](../06-filestore-postgres), filestore config is per-pod:
 
@@ -65,7 +65,7 @@ Cassandra takes ~60-90s to become ready, so the first deploy is slower than the 
 ../../test/verify.sh kc-07 demo   demo-app                 # pre-configured instance
 ```
 
-## The version-controlled config (`config/filestore/`)
+## Version-controlled config (`config/filestore/`)
 
 The same demo config as [scenario 6](../06-filestore-postgres) (the `master` and `demo` realms as
 YAML files), bootstrapped in write mode and committed. Editing a file and rebuilding the image

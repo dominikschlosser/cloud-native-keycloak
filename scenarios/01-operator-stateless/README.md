@@ -54,7 +54,7 @@ The operator creates a ClusterIP Service (`keycloak-service`). `manifests/20-key
 adds a NodePort Service named `keycloak` selecting the same pods (so `http://localhost:8080` works and
 `test/verify.sh` finds it under the default Service name).
 
-## The version-controlled config (`config/realm-demo.yaml`)
+## Version-controlled config (`config/realm-demo.yaml`)
 
 A `KeycloakRealmImport` CR carries the `demo` realm (client `demo-app`, client scope `demo-scope`,
 role `demo-role`, and an Organization `demo-org`). Applying it makes the operator run an import Job

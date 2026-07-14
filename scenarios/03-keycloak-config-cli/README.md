@@ -47,7 +47,7 @@ realm file. The extension-based scenarios (4-7) cannot enable the feature.
 ../../test/verify.sh kc-03 demo   demo-app                 # pre-configured instance
 ```
 
-## Config lives in the database
+## Config in the database
 
 The realm file is desired state that config-cli applies into Keycloak. The live store is PostgreSQL,
 so console or API edits made after an import can drift until the next run. Like scenarios 1 and 2,

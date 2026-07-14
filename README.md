@@ -18,15 +18,15 @@ CRs or YAML files Keycloak reads are the committed files themselves.
 
 ## The seven scenarios
 
-| # | Scenario | Config store | Dynamic store | Database-free | Organizations | Config as |
-|---|---|---|---|:---:|:---:|---|
-| 1 | [operator-stateless](scenarios/01-operator-stateless) | PostgreSQL | PostgreSQL | no | yes | `KeycloakRealmImport` CR |
-| 2 | [terraform](scenarios/02-terraform) | PostgreSQL | PostgreSQL | no | yes | Terraform HCL |
-| 3 | [keycloak-config-cli](scenarios/03-keycloak-config-cli) | PostgreSQL | PostgreSQL | no | yes | realm representation YAML |
-| 4 | [k8store-postgres](scenarios/04-k8store-postgres) | Kubernetes CRs | PostgreSQL | no | no | k8store CR manifests |
-| 5 | [k8store-cassandra](scenarios/05-k8store-cassandra) | Kubernetes CRs | Cassandra | yes | no | k8store CR manifests |
-| 6 | [filestore-postgres](scenarios/06-filestore-postgres) | YAML files | PostgreSQL | no | no | filestore YAML files |
-| 7 | [filestore-cassandra](scenarios/07-filestore-cassandra) | YAML files | Cassandra | yes | no | filestore YAML files |
+| # | Scenario | Config store | Dynamic store | Relational DB | Organizations | Config as |
+|---|---|---|---|:-------------:|:---:|---|
+| 1 | [operator-stateless](scenarios/01-operator-stateless) | PostgreSQL | PostgreSQL |      yes      | yes | `KeycloakRealmImport` CR |
+| 2 | [terraform](scenarios/02-terraform) | PostgreSQL | PostgreSQL |      yes      | yes | Terraform HCL |
+| 3 | [keycloak-config-cli](scenarios/03-keycloak-config-cli) | PostgreSQL | PostgreSQL |      yes      | yes | realm representation YAML |
+| 4 | [k8store-postgres](scenarios/04-k8store-postgres) | Kubernetes CRs | PostgreSQL |      yes      | no | k8store CR manifests |
+| 5 | [k8store-cassandra](scenarios/05-k8store-cassandra) | Kubernetes CRs | Cassandra |      no       | no | k8store CR manifests |
+| 6 | [filestore-postgres](scenarios/06-filestore-postgres) | YAML files | PostgreSQL |      yes      | no | filestore YAML files |
+| 7 | [filestore-cassandra](scenarios/07-filestore-cassandra) | YAML files | Cassandra |      no       | no | filestore YAML files |
 
 Scenarios 4-7 use community datastore extensions:
 [k8store](https://github.com/dominikschlosser/keycloak-k8store),
@@ -209,7 +209,7 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   database.
 - **Requires:** Cassandra and the driver `application.conf`. No Organizations. Writable variant is
   single-replica.
-- **When to use:** you want file-based config and a fully database-free, multi-datacenter dynamic store (or already use Cassandra, for example in a 2 datacenter setup).
+- **When to use:** you want file-based config and a relational-database-free, multi-datacenter dynamic store (or already use Cassandra, for example in a 2 datacenter setup).
 
 ## GitOps with ArgoCD
 

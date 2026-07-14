@@ -1,6 +1,6 @@
 # Scenario 5: k8store (config in CRs) + Cassandra (dynamic)
 
-Keycloak 26.7.0 running **fully database-free**:
+Keycloak 26.7.0 running with **no relational database**:
 [k8store](https://github.com/dominikschlosser/keycloak-k8store) serves the configuration entities as
 Kubernetes Custom Resources, and the
 [keycloak-cassandra-extension](https://github.com/opdt/keycloak-cassandra-extension) serves the
@@ -51,7 +51,7 @@ Cassandra takes ~60-90s to become ready, so the first deploy is slower than the 
 ../../test/verify.sh kc-05 demo   demo-app                 # pre-configured instance
 ```
 
-## The version-controlled config (`config/`)
+## Version-controlled config (`config/`)
 
 The same full-realm k8store CR set as [scenario 4](../04-k8store-postgres) (`master` and `demo`
 realms). Same two variants: **new** boots writable and `KC_BOOTSTRAP_ADMIN` seeds the admin;

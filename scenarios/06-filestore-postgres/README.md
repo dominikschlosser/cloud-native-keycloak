@@ -26,7 +26,7 @@ filestore owns the deployment state provider even with a database, and without a
 it writes into the admin console HTML does not match what it serves, so the console assets 404 and
 never load.
 
-## Two variants, two topologies
+## Variants
 
 filestore config is **per-pod** (there is no shared API like k8store's CRs), so the topology differs:
 
@@ -57,7 +57,7 @@ filestore config is **per-pod** (there is no shared API like k8store's CRs), so 
 ../../test/verify.sh kc-06 demo   demo-app                 # pre-configured instance
 ```
 
-## The version-controlled config (`config/filestore/`)
+## Version-controlled config (`config/filestore/`)
 
 Bootstrapped once in write mode, then the whole filestore directory was copied out and committed. It
 holds the `master` and `demo` realms (`master.yaml`, `demo.yaml`, and their `clients/`,
