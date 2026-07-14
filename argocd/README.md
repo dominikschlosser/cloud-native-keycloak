@@ -44,11 +44,12 @@ with a port-forward:
 
 ```bash
 kubectl -n argocd port-forward svc/argocd-server 8081:443
-# open https://localhost:8081 (accept the self-signed cert), user: admin
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+# open https://localhost:8081 (accept the self-signed cert)
+# login: admin / admin
 ```
 
-The password comes from the `argocd-initial-admin-secret` that ArgoCD creates on install.
+`setup.sh` sets the admin password to `admin` (demo only). In production leave the generated
+`argocd-initial-admin-secret` password in place, or use SSO.
 
 ## Changing config the GitOps way
 

@@ -44,6 +44,14 @@ wait_rollout argocd deployment/argocd-repo-server 300s
 wait_rollout argocd deployment/argocd-server 300s
 wait_rollout argocd deployment/git-server 120s
 
+# Set the ArgoCD admin password to "admin" (demo only). The value below is a bcrypt hash of
+# "admin", which is what ArgoCD stores in argocd-secret.
+ADMIN_HASH='$2a$10$XWuiu2v5oKsqcNoMT1tbt.byKaJveyJzHWP3gJzgLc61t.9AC.4X.'
+${KUBECTL} -n argocd patch secret argocd-secret --type merge \
+  -p "{\"stringData\": {\"admin.password\": \"${ADMIN_HASH}\", \"admin.passwordMtime\": \"$(date -u +%FT%TZ)\"}}" >/dev/null
+${KUBECTL} -n argocd rollout restart deployment/argocd-server >/dev/null
+wait_rollout argocd deployment/argocd-server 120s
+
 # 5. The Application (ArgoCD syncs from git://git-server:9418/repo)
 log "Creating the ArgoCD Application"
 ${KUBECTL} apply -f argocd/application.yaml >/dev/null
@@ -61,8 +69,7 @@ cat <<'EOF'
 ArgoCD deployed Keycloak + CRs from the in-cluster git repo (read-only).
   Verify:  CNK_KC_SVC=keycloak test/verify.sh kc-argocd demo demo-app
   Console: http://localhost:8080  (admin/admin)
-  ArgoCD:  kubectl -n argocd port-forward svc/argocd-server 8081:443
-           (user admin, password: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d)
+  ArgoCD:  kubectl -n argocd port-forward svc/argocd-server 8081:443  (https://localhost:8081, admin/admin)
   Change config the GitOps way: edit argocd/app/config/*.yaml, rebuild+push the git-server
   image (or push to the repo), and ArgoCD reconciles it.
   Tear down: argocd/teardown.sh
