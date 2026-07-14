@@ -90,6 +90,7 @@ Factual characteristics per scenario, along the dimensions that distinguish them
 - **Zero-downtime upgrades:** the operator rolls the StatefulSet. Database schema migrations run on
   the new version.
 - **Requires:** the Keycloak Operator and a relational database. Supports Organizations.
+- **When to use:** you want stock, fully supported Keycloak (Organizations and every feature) and accept a relational database and config that lives in the database.
 
 ### 2 · terraform
 - **Config lives in:** PostgreSQL. `terraform apply` writes config into the database through the admin
@@ -109,6 +110,7 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   Tracking config across upgrades needs a persisted state backend.
 - **Requires:** Terraform (or OpenTofu), the provider, a state backend, and a relational database.
   Supports Organizations.
+- **When to use:** your platform already runs Terraform and you want config as reviewable HCL with plan-based drift detection, on standard storage.
 
 ### 3 · k8store-postgres
 - **Config lives in:** Kubernetes CRs (etcd). The committed manifests are the source, and read-only
@@ -126,6 +128,7 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   regenerate on a Keycloak version bump and apply without downtime. Database migrations run.
 - **Requires:** the k8store CRDs, RBAC on the `k8store.dominikschlosser.github.io` API group, and a
   relational database. No Organizations with the default areas.
+- **When to use:** you want GitOps-native config as Kubernetes CRs (applied by kubectl or ArgoCD, served read-only) with a relational database for users and sessions.
 
 ### 4 · k8store-cassandra
 - **Config lives in:** Kubernetes CRs (as scenario 3). Users and sessions live in Cassandra.
@@ -141,6 +144,7 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   (`cassandra-migration`). No relational database.
 - **Requires:** the k8store CRDs and RBAC, Cassandra, and the driver `application.conf` (see the
   scenario README). No Organizations.
+- **When to use:** you want CR-based GitOps config and a database-free dynamic store that spans datacenters (active-active).
 
 ### 5 · filestore-postgres
 - **Config lives in:** YAML files, baked into the image (read-only variant) or on a per-pod volume
@@ -156,6 +160,7 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   run. Config is per-pod, so during the rollout window each pod serves its own image's config.
 - **Requires:** a relational database. No custom API group. No Organizations. The writable variant
   runs one replica (per-pod files are not shared).
+- **When to use:** you want file-based config mounted read-only, with a relational database, and can accept per-pod config (a single writable replica).
 
 ### 6 · filestore-cassandra
 - **Config lives in:** YAML files in the image (as scenario 5). Users and sessions live in Cassandra.
@@ -168,6 +173,7 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   database.
 - **Requires:** Cassandra and the driver `application.conf`. No Organizations. Writable variant is
   single-replica.
+- **When to use:** you want file-based config and a fully database-free, multi-datacenter dynamic store.
 
 ### Zero-downtime upgrades (what makes them work)
 
