@@ -80,12 +80,17 @@ metadata:
   labels:
     app: keycloak
 spec:
+  # NodePort so the deployed Keycloak is reachable at http://localhost:8080 through the
+  # kind host port mappings (see kind/kind-up.sh), no port-forward needed.
+  type: NodePort
   selector:
     app: keycloak
   ports:
     - name: http
       port: 8080
       targetPort: 8080
+      nodePort: 30080
     - name: management
       port: 9000
       targetPort: 9000
+      nodePort: 30900

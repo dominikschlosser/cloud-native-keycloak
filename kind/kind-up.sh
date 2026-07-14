@@ -24,7 +24,11 @@ else
   echo "Local registry ${REG_NAME} already running"
 fi
 
-# 2. kind cluster: 1 control-plane + 2 workers
+# 2. kind cluster: 1 control-plane + 2 workers. The control-plane publishes the Keycloak
+#    Service NodePorts on the host (30080 -> 8080 console, 30900 -> 9000 management), so a
+#    deployed scenario is reachable at http://localhost:8080 with no port-forward. NodePorts
+#    answer on every node, so mapping them on the control-plane still routes to the worker
+#    pods. Only one scenario is deployed at a time, so they share the fixed NodePorts.
 if kind get clusters 2>/dev/null | grep -qx "${CLUSTER_NAME}"; then
   echo "kind cluster ${CLUSTER_NAME} already exists"
 else
@@ -33,6 +37,13 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
+  extraPortMappings:
+  - containerPort: 30080
+    hostPort: 8080
+    protocol: TCP
+  - containerPort: 30900
+    hostPort: 9000
+    protocol: TCP
 - role: worker
 - role: worker
 containerdConfigPatches:

@@ -1,0 +1,26 @@
+# The operator creates a ClusterIP Service (keycloak-service). This adds a NodePort Service
+# selecting the same operator-managed pods, so the deployed Keycloak is reachable at
+# http://localhost:8080 through the kind host port mappings (see kind/kind-up.sh). Named
+# `keycloak` so test/verify.sh uses its default Service name.
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: kc-01
+  labels:
+    app: keycloak
+spec:
+  type: NodePort
+  selector:
+    app: keycloak
+    app.kubernetes.io/instance: keycloak
+    app.kubernetes.io/managed-by: keycloak-operator
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
+    - name: management
+      port: 9000
+      targetPort: 9000
+      nodePort: 30900

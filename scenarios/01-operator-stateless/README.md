@@ -46,11 +46,13 @@ feature.
 ### Verify
 
 ```bash
-CNK_KC_SVC=keycloak-service ../../test/verify.sh kc-01 master security-admin-console   # new instance
-CNK_KC_SVC=keycloak-service ../../test/verify.sh kc-01 demo   demo-app                 # pre-configured
+../../test/verify.sh kc-01 master security-admin-console   # new instance
+../../test/verify.sh kc-01 demo   demo-app                 # pre-configured
 ```
 
-The operator names its Service `keycloak-service`, so `CNK_KC_SVC` points the verifier at it.
+The operator creates a ClusterIP Service (`keycloak-service`); `manifests/20-keycloak-nodeport.yaml`
+adds a NodePort Service named `keycloak` selecting the same pods, so `http://localhost:8080` works and
+`test/verify.sh` finds the Service under its default name.
 
 ## The version-controlled config (`config/realm-demo.yaml`)
 

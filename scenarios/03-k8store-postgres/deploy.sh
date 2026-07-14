@@ -65,6 +65,6 @@ cat <<EOF
 
 Deployed scenario 03 (k8store + PostgreSQL) into namespace ${NS}.
   Verify:  test/verify.sh ${NS} $([ "${PRECONFIGURED}" = true ] && echo 'demo demo-app' || echo 'master security-admin-console')
-  Console: kubectl -n ${NS} port-forward svc/keycloak 8080:8080  (admin/admin)
+  Console: http://localhost:8080  (admin/admin), management http://localhost:9000
   Config:  kubectl -n ${NS} get keycloakrealms,keycloakclients
 EOF

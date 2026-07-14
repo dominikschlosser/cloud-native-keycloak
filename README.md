@@ -61,8 +61,12 @@ kind/kind-down.sh                            # tear it all down
 
 Every scenario follows the same shape (`deploy.sh [--preconfigured]`, then `test/verify.sh`). Each
 deploys into its own namespace (`kc-01` … `kc-06`), so they do not collide and can run one after
-another on the one cluster. See each scenario's README for its exact verify command (scenario 1 sets
-`CNK_KC_SVC=keycloak-service`).
+another on the one cluster.
+
+The kind cluster publishes the Keycloak Service NodePorts on the host, so a deployed scenario is
+reachable directly at **http://localhost:8080** (admin console, admin/admin) and
+**http://localhost:9000** (health/metrics) with no port-forward. One scenario is deployed at a time,
+so they share the fixed NodePorts.
 
 ## Comparison across dimensions
 

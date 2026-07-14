@@ -41,6 +41,8 @@ ${KUBECTL} apply -f manifests/00-secrets.yaml
 apply_db "${NS}" postgres
 wait_rollout "${NS}" deployment/postgres 300s
 ${KUBECTL} apply -f manifests/10-keycloak.yaml
+# NodePort Service selecting the operator-managed pods, for http://localhost:8080 access.
+${KUBECTL} apply -f manifests/20-keycloak-nodeport.yaml
 
 log "Waiting for the operator to roll out Keycloak (StatefulSet keycloak)"
 ${KUBECTL} -n "${NS}" wait --for=condition=Ready keycloak/keycloak --timeout=600s
@@ -55,6 +57,6 @@ ${KUBECTL} -n "${NS}" get pods -o wide
 cat <<EOF
 
 Deployed scenario 01 (operator + stateless + PostgreSQL) into namespace ${NS}.
-  Verify:  CNK_KC_SVC=keycloak-service test/verify.sh ${NS} $([ "${PRECONFIGURED}" = true ] && echo 'demo demo-app' || echo 'master security-admin-console')
-  Console: kubectl -n ${NS} port-forward svc/keycloak-service 8080:8080  (admin/admin)
+  Verify:  test/verify.sh ${NS} $([ "${PRECONFIGURED}" = true ] && echo 'demo demo-app' || echo 'master security-admin-console')
+  Console: http://localhost:8080  (admin/admin), management http://localhost:9000
 EOF
