@@ -37,6 +37,19 @@ argocd/teardown.sh       # remove the demo
 The Keycloak image is scenario 3's (`localhost:5001/cnk-03:dev`). `setup.sh` builds it if missing.
 ArgoCD only syncs manifests, so in a real setup CI builds the image and ArgoCD references it.
 
+## ArgoCD UI
+
+The `argocd-server` Service is ClusterIP (the kind host ports are used by Keycloak). Reach the UI
+with a port-forward:
+
+```bash
+kubectl -n argocd port-forward svc/argocd-server 8081:443
+# open https://localhost:8081 (accept the self-signed cert), user: admin
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+```
+
+The password comes from the `argocd-initial-admin-secret` that ArgoCD creates on install.
+
 ## Changing config the GitOps way
 
 Edit a CR under `app/config/`, rebuild and push the git-server image (or push a commit to the repo),
