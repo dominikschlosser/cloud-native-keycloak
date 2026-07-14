@@ -6,7 +6,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: filestore
-  namespace: kc-04
+  namespace: kc-05
 spec:
   accessModes: ["ReadWriteOnce"]
   resources:
@@ -17,7 +17,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak
-  namespace: kc-04
+  namespace: kc-05
   labels:
     app: keycloak
 spec:
@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: localhost:5001/cnk-04:dev
+          image: localhost:5001/cnk-05:dev
           imagePullPolicy: Always
           args:
             - start
@@ -63,7 +63,7 @@ spec:
             # stable seed the theme /resources/{tag}/ cache-buster in the console HTML does
             # not match what it serves, so the admin console assets 404 and never load.
             - name: KC_SPI_DATASTORE__FILE__RESOURCES_VERSION_SEED
-              value: cnk-04
+              value: cnk-05
           ports:
             - name: http
               containerPort: 8080

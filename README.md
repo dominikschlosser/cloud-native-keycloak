@@ -1,39 +1,42 @@
 # cloud-native-keycloak
 
-Five ways to run **Keycloak 26.7.0** cloud-natively, each in its own folder with its own docs, each
+Six ways to run **Keycloak 26.7.0** cloud-natively, each in its own folder with its own docs, each
 deployable into a **shared 2-worker [kind](https://kind.sigs.k8s.io/) cluster** in two variants:
 
 - a **new** instance (fresh Keycloak, master realm only, configure it yourself), and
 - a **pre-configured** instance (a version-controlled `demo` realm applied the GitOps way).
 
-All five run Keycloak with the `stateless` feature (no external Infinispan). What differs is where
-**configuration** (realms, clients, client scopes, roles) and **dynamic data** (users, sessions)
-are stored. Configuration is always version-controlled; dynamic data always lives in a database.
+All six run Keycloak with the `stateless` feature (no external Infinispan). What differs is how
+**configuration** (realms, clients, client scopes, roles) is version-controlled and where
+**dynamic data** (users, sessions) is stored. Configuration is always version-controlled; dynamic
+data always lives in a database.
 
-## The five scenarios
+## The six scenarios
 
 | # | Scenario | Config store | Dynamic store | Database-free | Organizations | Config as |
 |---|---|---|---|:---:|:---:|---|
 | 1 | [operator-stateless](scenarios/01-operator-stateless) | standard Keycloak | PostgreSQL | no | **yes** | `KeycloakRealmImport` CR |
-| 2 | [k8store-postgres](scenarios/02-k8store-postgres) | Kubernetes CRs | PostgreSQL | no | no | k8store CR manifests |
-| 3 | [k8store-cassandra](scenarios/03-k8store-cassandra) | Kubernetes CRs | Cassandra | yes | no | k8store CR manifests |
-| 4 | [filestore-postgres](scenarios/04-filestore-postgres) | YAML files | PostgreSQL | no | no | filestore YAML files |
-| 5 | [filestore-cassandra](scenarios/05-filestore-cassandra) | YAML files | Cassandra | yes | no | filestore YAML files |
+| 2 | [terraform](scenarios/02-terraform) | standard Keycloak | PostgreSQL | no | **yes** | Terraform HCL |
+| 3 | [k8store-postgres](scenarios/03-k8store-postgres) | Kubernetes CRs | PostgreSQL | no | no | k8store CR manifests |
+| 4 | [k8store-cassandra](scenarios/04-k8store-cassandra) | Kubernetes CRs | Cassandra | yes | no | k8store CR manifests |
+| 5 | [filestore-postgres](scenarios/05-filestore-postgres) | YAML files | PostgreSQL | no | no | filestore YAML files |
+| 6 | [filestore-cassandra](scenarios/06-filestore-cassandra) | YAML files | Cassandra | yes | no | filestore YAML files |
 
-Scenarios 2-5 use community datastore extensions pulled from Maven Central:
+Scenarios 3-6 use community datastore extensions pulled from Maven Central:
 [k8store](https://github.com/dominikschlosser/keycloak-k8store) `0.1.3`,
 [keycloak-cassandra-extension](https://github.com/opdt/keycloak-cassandra-extension) `6.0.0`, and
 [keycloak-extension-filestore](https://github.com/dominikschlosser/keycloak-extension-filestore)
 `3.0.0`. Each selects a datastore (`--spi-datastore--provider=...`) and self-configures the rest.
+Scenarios 1 and 2 use unmodified upstream Keycloak.
 
 ## Organizations
 
-**Only scenario 1 supports Keycloak Organizations**, because it uses standard Keycloak storage. The
-extension-based scenarios disable the feature:
+**Only scenarios 1 and 2 support Keycloak Organizations**, because they use standard Keycloak storage.
+The extension-based scenarios disable the feature:
 
-- **k8store** (scenarios 2, 3): the default areas keep groups in CRs, and the JPA organization store
+- **k8store** (scenarios 3, 4): the default areas keep groups in CRs, and the JPA organization store
   cannot reference CR-backed groups. Organizations would need the opt-in `organization` area.
-- **filestore** and **cassandra** (scenarios 3, 4, 5): the extensions do not implement Organizations.
+- **filestore** and **cassandra** (scenarios 4, 5, 6): the extensions do not implement Organizations.
 
 The pre-configured demo realm in scenario 1 includes an Organization to show it working.
 
@@ -42,53 +45,87 @@ The pre-configured demo realm in scenario 1 includes an Organization to show it 
 ```bash
 kind/kind-up.sh                              # 1 control-plane + 2 workers + local registry (once)
 
-scenarios/02-k8store-postgres/deploy.sh                  # a new instance, or
-scenarios/02-k8store-postgres/deploy.sh --preconfigured  # the version-controlled demo realm
+scenarios/03-k8store-postgres/deploy.sh                  # a new instance, or
+scenarios/03-k8store-postgres/deploy.sh --preconfigured  # the version-controlled demo realm
 
-test/verify.sh kc-02 master security-admin-console       # new: REST + browser login + clients page
-test/verify.sh kc-02 demo   demo-app                     # pre-configured
+test/verify.sh kc-03 master security-admin-console       # new: REST + browser login + clients page
+test/verify.sh kc-03 demo   demo-app                     # pre-configured
 
 kind/kind-down.sh                            # tear it all down
 ```
 
 Every scenario follows the same shape (`deploy.sh [--preconfigured]`, then `test/verify.sh`). Each
-deploys into its own namespace (`kc-01` … `kc-05`), so they do not collide and can run one after
+deploys into its own namespace (`kc-01` … `kc-06`), so they do not collide and can run one after
 another on the one cluster. See each scenario's README for its exact verify command (scenario 1 sets
 `CNK_KC_SVC=keycloak-service`).
 
-## Pros and cons
+## Comparison across dimensions
+
+Each scenario's pros and cons, along the dimensions that tend to decide between them.
 
 ### 1 · operator-stateless
-- **Pros:** stock Keycloak, nothing experimental; the official Operator handles rollout and upgrades;
-  the only scenario with Organizations and full feature support; realm import is well documented.
-- **Cons:** config lives in the database after import (the CR is the source, but drift is possible);
-  needs a relational database; heavier than a plain Deployment.
+- **Versioning:** the realm is one `KeycloakRealmImport` CR (Keycloak's full realm representation).
+  Coarse-grained (a whole realm per file), and import is one-way, so console edits after import drift
+  from the committed CR.
+- **Backup/restore:** standard Keycloak storage, so mature tooling applies (`pg_dump`, `kc.sh export`,
+  realm import). One relational database to back up.
+- **Ease of use:** highest. The official operator owns rollout, upgrades, TLS and scaling, and is
+  well documented.
+- **Flexibility:** the realm import covers the whole realm representation, but the `Keycloak` CR
+  exposes only a subset of server options as fields; the rest go through the `additionalOptions`
+  escape hatch, so server-level tuning is less direct.
+- **Ops:** needs a relational database; supports Organizations and all features.
 
-### 2 · k8store-postgres
-- **Pros:** config is Kubernetes CRs, so GitOps is native (`kubectl apply`, no restart, changes served
-  in milliseconds); every replica mirrors the CRs in memory; read-only mode makes the CRs the single
-  source of truth.
-- **Cons:** needs a relational database for users and sessions; requires RBAC on a custom API group;
-  no Organizations with the default areas.
+### 2 · terraform
+- **Versioning:** the strongest change-management story. Fine-grained HCL resources, reviewable
+  `terraform plan` diffs, and state that detects drift and reconciles the server back to the code.
+- **Backup/restore:** standard storage (database backup), plus the Terraform state and code together
+  reproduce the config. Production needs a real state backend (S3/GCS/database).
+- **Ease of use:** familiar to platform teams, but it adds Terraform, the provider and a state
+  backend to operate.
+- **Flexibility:** a large curated resource set with interpolation and modules, and it can orchestrate
+  systems beyond Keycloak. It does lag brand-new Keycloak features (not every field is a resource).
+- **Ops:** needs a relational database; supports Organizations (standard storage).
 
-### 3 · k8store-cassandra
-- **Pros:** fully database-free (config in CRs, dynamic data in Cassandra); Cassandra scales
-  horizontally with no primary; keeps k8store's GitOps model for config.
-- **Cons:** the most experimental combination; Cassandra is heavier to operate; no Organizations; the
-  shaded driver needs a supplied `reference.conf` (handled by the image).
+### 3 · k8store-postgres
+- **Versioning:** one CR per entity, native GitOps. `kubectl apply` is served within milliseconds with
+  no restart, and read-only mode makes the CRs the single source of truth.
+- **Backup/restore:** config CRs live in git (git is the backup) and in etcd; users live in
+  PostgreSQL. Two systems to back up.
+- **Ease of use:** kubectl-native and no rebuild to change config, but it adds custom CRDs and RBAC on
+  a custom API group.
+- **Flexibility:** CRs hold Keycloak's own representation JSON verbatim, so any exported field is
+  expressible (high config fidelity).
+- **Ops:** needs a relational database; no Organizations with the default areas.
 
-### 4 · filestore-postgres
-- **Pros:** config is plain YAML files, easy to read and diff; simple mental model (mount files
-  read-only); no custom API group or RBAC.
-- **Cons:** config is per-pod, not shared, so the writable instance is single-replica and the
-  read-only instance bakes the files into the image; a running instance does not observe file edits
-  (config changes mean a rollout); no Organizations.
+### 4 · k8store-cassandra
+- **Versioning:** same CR model as scenario 3.
+- **Backup/restore:** config in git and etcd; dynamic data in Cassandra (`nodetool` snapshots), a
+  different backup model than a relational database.
+- **Ease of use:** the most experimental combination. Cassandra is heavier to operate, and the shaded
+  driver needs a supplied `reference.conf` (handled by the image).
+- **Flexibility:** high (representation CRs).
+- **Ops:** fully database-free (no relational database); no Organizations.
 
-### 5 · filestore-cassandra
-- **Pros:** fully database-free with the simplest possible config format (files); good for immutable,
-  image-baked configuration.
-- **Cons:** combines filestore's per-pod caveats with Cassandra's operational weight; no
-  Organizations; the shaded driver needs a supplied `reference.conf` (handled by the image).
+### 5 · filestore-postgres
+- **Versioning:** one YAML file per entity, very readable and easy to diff. But config is per-pod and a
+  running instance does not observe file edits, so changes mean an image rebuild and rollout.
+- **Backup/restore:** config is files in git, baked into the image (git is the backup); users live in
+  PostgreSQL.
+- **Ease of use:** the simplest format (plain files) with no custom API group, but the per-pod model
+  forces a single writable replica or an image-baked read-only seed, and the seeded admin needs a
+  small profile workaround.
+- **Flexibility:** files hold Keycloak's representation, so high config fidelity (identity providers
+  included).
+- **Ops:** needs a relational database; no Organizations.
+
+### 6 · filestore-cassandra
+- **Versioning:** same file model as scenario 5.
+- **Backup/restore:** config in git and the image; dynamic data in Cassandra.
+- **Ease of use:** files are simple, but this combines filestore's per-pod caveats with Cassandra's
+  operational weight and the driver `reference.conf` workaround.
+- **Flexibility:** high (representation files).
+- **Ops:** fully database-free; no Organizations.
 
 ## How config is version-controlled per scenario
 
@@ -96,18 +133,20 @@ Config areas (realms, clients, client scopes, roles) are always in git; dynamic 
 sessions) always in the database. The mechanism differs:
 
 - **Scenario 1** — a `KeycloakRealmImport` CR carrying the realm JSON, imported by the operator.
-- **Scenarios 2-3** — one CR manifest per entity (`KeycloakRealm`, `KeycloakClient`, …), applied with
+- **Scenario 2** — Terraform HCL applied against the admin API by a one-shot Job.
+- **Scenarios 3-4** — one CR manifest per entity (`KeycloakRealm`, `KeycloakClient`, …), applied with
   `kubectl`. Read-only mode makes them authoritative.
-- **Scenarios 4-5** — one YAML file per entity, baked into the image as a read-only seed.
+- **Scenarios 5-6** — one YAML file per entity, baked into the image as a read-only seed.
 
-The demo realm was bootstrapped once in write mode and its materialized config exported and
-committed, which is the workflow these stores recommend.
+For scenarios 3-6 the demo realm was bootstrapped once in write mode and its materialized config
+exported and committed, which is the workflow those stores recommend.
 
 ## Requirements
 
-Docker, `kind`, `kubectl`, `mvn` and a JDK (to stage the provider jars from Maven Central), and
-Node.js with a local Chrome/Chromium (the browser verification uses `puppeteer-core` against the
-system Chrome). Keycloak images are `quay.io/keycloak/keycloak:26.7.0`.
+Docker, `kind`, `kubectl`, `mvn` and a JDK (to stage the provider jars from Maven Central for
+scenarios 3-6), and Node.js with a local Chrome/Chromium (the browser verification uses
+`puppeteer-core` against the system Chrome). Keycloak images are `quay.io/keycloak/keycloak:26.7.0`;
+scenario 2 also pulls a `hashicorp/terraform` image for the apply Job.
 
 ## Layout
 

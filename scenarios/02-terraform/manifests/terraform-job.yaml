@@ -1,0 +1,39 @@
+# Applies the committed Terraform config (config/main.tf, mounted as a ConfigMap) against
+# the running Keycloak. State is kept in the pod (ephemeral) since this is a one-shot apply.
+# waitForCassandra is not needed here; the init container waits for Keycloak to answer.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: terraform-apply
+  namespace: kc-02
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app: keycloak-terraform
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: wait-keycloak
+          image: busybox:1.36
+          command: ["sh", "-c", "until wget -q -O- http://keycloak:8080/realms/master >/dev/null 2>&1; do echo waiting for keycloak; sleep 3; done"]
+      containers:
+        - name: terraform
+          image: hashicorp/terraform:1.13
+          workingDir: /work
+          command:
+            - sh
+            - -c
+            - cp /tf/*.tf /work/ && terraform init -input=false && terraform apply -auto-approve -input=false
+          volumeMounts:
+            - name: tf
+              mountPath: /tf
+            - name: work
+              mountPath: /work
+      volumes:
+        - name: tf
+          configMap:
+            name: terraform-config
+        - name: work
+          emptyDir: {}

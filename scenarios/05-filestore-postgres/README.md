@@ -1,4 +1,4 @@
-# Scenario 4 — filestore (config in YAML files) + PostgreSQL (dynamic)
+# Scenario 5 — filestore (config in YAML files) + PostgreSQL (dynamic)
 
 Keycloak 26.7.0 with the
 [filestore](https://github.com/dominikschlosser/keycloak-extension-filestore) datastore extension.
@@ -53,8 +53,8 @@ filestore config is **per-pod** (there is no shared API like k8store's CRs), so 
 ### Verify
 
 ```bash
-../../test/verify.sh kc-04 master security-admin-console   # new instance
-../../test/verify.sh kc-04 demo   demo-app                 # pre-configured instance
+../../test/verify.sh kc-05 master security-admin-console   # new instance
+../../test/verify.sh kc-05 demo   demo-app                 # pre-configured instance
 ```
 
 ## The version-controlled config (`config/filestore/`)

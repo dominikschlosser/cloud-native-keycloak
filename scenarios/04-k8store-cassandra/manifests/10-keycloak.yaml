@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak
-  namespace: kc-03
+  namespace: kc-04
   labels:
     app: keycloak
 spec:
@@ -34,7 +34,7 @@ spec:
           command: ["sh", "-c", "until nc -z cassandra 9042; do echo waiting for cassandra; sleep 3; done"]
       containers:
         - name: keycloak
-          image: localhost:5001/cnk-03:dev
+          image: localhost:5001/cnk-04:dev
           imagePullPolicy: Always
           args:
             - start
@@ -95,7 +95,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: keycloak
-  namespace: kc-03
+  namespace: kc-04
   labels:
     app: keycloak
 spec:

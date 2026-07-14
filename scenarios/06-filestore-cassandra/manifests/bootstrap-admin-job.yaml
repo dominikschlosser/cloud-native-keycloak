@@ -5,7 +5,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: bootstrap-admin
-  namespace: kc-05
+  namespace: kc-06
 spec:
   backoffLimit: 4
   template:
@@ -20,7 +20,7 @@ spec:
           command: ["sh", "-c", "until nc -z cassandra 9042; do echo waiting for cassandra; sleep 3; done"]
       containers:
         - name: bootstrap-admin
-          image: localhost:5001/cnk-05:dev
+          image: localhost:5001/cnk-06:dev
           imagePullPolicy: Always
           args:
             - bootstrap-admin
@@ -35,7 +35,7 @@ spec:
             - name: KC_SPI_MAP_STORAGE__FILE__DIR
               value: /opt/keycloak/seed/filestore
             - name: KC_SPI_DATASTORE__FILE__RESOURCES_VERSION_SEED
-              value: cnk-05
+              value: cnk-06
             - name: KC_SPI_CASSANDRA_CONNECTION_DEFAULT_CONTACT_POINTS
               value: cassandra
             - name: KC_SPI_CASSANDRA_CONNECTION_DEFAULT_PORT

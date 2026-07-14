@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak
-  namespace: kc-02
+  namespace: kc-03
   labels:
     app: keycloak
 spec:
@@ -30,7 +30,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
         - name: keycloak
-          image: localhost:5001/cnk-02:dev
+          image: localhost:5001/cnk-03:dev
           imagePullPolicy: Always
           # A non-optimized start re-augments in the pod when the k8store env options
           # change, so the build options are repeated here.
@@ -83,7 +83,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: keycloak
-  namespace: kc-02
+  namespace: kc-03
   labels:
     app: keycloak
 spec:

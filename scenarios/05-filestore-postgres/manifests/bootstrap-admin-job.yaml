@@ -6,7 +6,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: bootstrap-admin
-  namespace: kc-04
+  namespace: kc-05
 spec:
   backoffLimit: 4
   template:
@@ -17,7 +17,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: bootstrap-admin
-          image: localhost:5001/cnk-04:dev
+          image: localhost:5001/cnk-05:dev
           imagePullPolicy: Always
           args:
             - bootstrap-admin
@@ -38,6 +38,6 @@ spec:
             - name: KC_SPI_MAP_STORAGE__FILE__DIR
               value: /opt/keycloak/seed/filestore
             - name: KC_SPI_DATASTORE__FILE__RESOURCES_VERSION_SEED
-              value: cnk-04
+              value: cnk-05
             - name: KC_BOOTSTRAP_ADMIN_PASSWORD
               value: admin

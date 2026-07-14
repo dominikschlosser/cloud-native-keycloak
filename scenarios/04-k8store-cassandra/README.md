@@ -1,4 +1,4 @@
-# Scenario 3 — k8store (config in CRs) + Cassandra (dynamic)
+# Scenario 4 — k8store (config in CRs) + Cassandra (dynamic)
 
 Keycloak 26.7.0 running **fully database-free**:
 [k8store](https://github.com/dominikschlosser/keycloak-k8store) serves the configuration entities as
@@ -18,13 +18,13 @@ The image (`Dockerfile`) bakes both provider jars and runs `kc.sh build`:
 ```
 
 `k8store` is the selected datastore, so it serves the config areas as CRs (same GitOps model as
-[scenario 2](../02-k8store-postgres)). The cassandra extension claims the listed dynamic areas
+[scenario 3](../03-k8store-postgres)). The cassandra extension claims the listed dynamic areas
 through its `areas` option, so users and sessions go to Cassandra instead of the relational database
 k8store would otherwise use. Nothing uses JPA, so JPA legacy is turned off.
 
 ### The Cassandra driver reference.conf
 
-As in [scenario 5](../05-filestore-cassandra), the shaded cassandra jar overwrites the driver's
+As in [scenario 6](../06-filestore-cassandra), the shaded cassandra jar overwrites the driver's
 `reference.conf`, so `build-providers.sh` stages the driver's real one and the deployment supplies it
 with `-Dconfig.file=/opt/keycloak/conf/cassandra-driver.conf`.
 
@@ -48,13 +48,13 @@ Cassandra takes ~60-90s to become ready, so the first deploy is slower than the 
 ### Verify
 
 ```bash
-../../test/verify.sh kc-03 master security-admin-console   # new instance
-../../test/verify.sh kc-03 demo   demo-app                 # pre-configured instance
+../../test/verify.sh kc-04 master security-admin-console   # new instance
+../../test/verify.sh kc-04 demo   demo-app                 # pre-configured instance
 ```
 
 ## The version-controlled config (`config/`)
 
-The same k8store CR set as [scenario 2](../02-k8store-postgres) (the `demo` realm plus the master-side
+The same k8store CR set as [scenario 3](../03-k8store-postgres) (the `demo` realm plus the master-side
 management client and roles needed to administer it). `deploy.sh --preconfigured` applies `config/`
 and switches to read-only mode so the CRs are the single source of truth. Editing a CR and
 `kubectl apply`-ing it updates every replica within milliseconds, no restart.

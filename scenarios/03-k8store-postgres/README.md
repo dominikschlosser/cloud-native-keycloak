@@ -1,4 +1,4 @@
-# Scenario 2 — k8store (config in CRs) + PostgreSQL (dynamic)
+# Scenario 3 — k8store (config in CRs) + PostgreSQL (dynamic)
 
 Keycloak 26.7.0 with the [k8store](https://github.com/dominikschlosser/keycloak-k8store) datastore
 extension. Configuration entities (realms, clients, client scopes, roles, groups, identity
@@ -46,8 +46,8 @@ Keycloak replicas.
 ### Verify
 
 ```bash
-../../test/verify.sh kc-02 master security-admin-console   # new instance
-../../test/verify.sh kc-02 demo   demo-app                 # pre-configured instance
+../../test/verify.sh kc-03 master security-admin-console   # new instance
+../../test/verify.sh kc-03 demo   demo-app                 # pre-configured instance
 ```
 
 ## The version-controlled config (`config/`)

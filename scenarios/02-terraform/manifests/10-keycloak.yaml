@@ -1,11 +1,11 @@
-# Pre-configured (GitOps) instance. The committed demo config is baked into the image as a
-# read-only seed at /opt/keycloak/seed/filestore, identical on every pod, so this runs two
-# replicas pinned to separate workers. No volume (the config is immutable in the image).
+# Stock Keycloak 26.7.0 (no datastore extension), PostgreSQL, stateless feature. Terraform
+# manages the configuration through the admin API, so this is a plain Deployment with the
+# unmodified upstream image.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak
-  namespace: kc-04
+  namespace: kc-02
   labels:
     app: keycloak
 spec:
@@ -32,14 +32,11 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
         - name: keycloak
-          image: localhost:5001/cnk-04:dev
-          imagePullPolicy: Always
+          image: quay.io/keycloak/keycloak:26.7.0
           args:
             - start
             - --db=postgres
             - --features=stateless
-            - --spi-datastore--provider=file
-            - --features-disabled=authorization,admin-fine-grained-authz,organization
             - --health-enabled=true
             - --metrics-enabled=true
             - --hostname-strict=false
@@ -55,12 +52,6 @@ spec:
               value: admin
             - name: KC_BOOTSTRAP_ADMIN_PASSWORD
               value: admin
-            - name: KC_SPI_MAP_STORAGE__FILE__DIR
-              value: /opt/keycloak/seed/filestore
-            # Pins the theme /resources/{tag}/ cache-buster so every replica agrees on it
-            # and the admin console assets resolve (see keycloak-new.yaml for details).
-            - name: KC_SPI_DATASTORE__FILE__RESOURCES_VERSION_SEED
-              value: cnk-04
           ports:
             - name: http
               containerPort: 8080
@@ -80,3 +71,21 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 10
             failureThreshold: 12
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: kc-02
+  labels:
+    app: keycloak
+spec:
+  selector:
+    app: keycloak
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    - name: management
+      port: 9000
+      targetPort: 9000
