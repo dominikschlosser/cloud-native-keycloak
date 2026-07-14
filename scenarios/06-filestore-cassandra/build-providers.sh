@@ -19,7 +19,6 @@ resolve_providers target/providers \
     wildfly-common-*.jar commons-lang3-*.jar )
 log "Providers after prune: $(ls -1 target/providers)"
 
-# The shaded extension jar overwrites the Cassandra driver's own reference.conf, so its
-# defaults (advanced.*) are missing at runtime. Stage the driver's reference.conf so the
-# image can supply it via -Dconfig.file.
-cp ../../lib/cassandra-driver.conf target/cassandra-driver.conf
+# The shaded extension jar drops the Cassandra driver own reference.conf (its advanced.*
+# defaults), so stage an application.conf that carries them (loaded via -Dconfig.file).
+cp ../../lib/cassandra-application.conf target/cassandra-application.conf

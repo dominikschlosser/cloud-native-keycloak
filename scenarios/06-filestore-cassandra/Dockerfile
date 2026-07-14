@@ -21,5 +21,5 @@ FROM quay.io/keycloak/keycloak:26.7.0
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 COPY config/filestore/ /opt/keycloak/seed/filestore/
 # Cassandra driver defaults (see build-providers.sh), supplied at runtime via -Dconfig.file.
-COPY target/cassandra-driver.conf /opt/keycloak/conf/cassandra-driver.conf
+COPY target/cassandra-application.conf /opt/keycloak/conf/cassandra-application.conf
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]

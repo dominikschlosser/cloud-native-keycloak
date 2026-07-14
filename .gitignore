@@ -15,4 +15,3 @@ test/screenshots/
 .idea/
 hs_err_pid*
 replay_pid*
-scenarios/*/crds/

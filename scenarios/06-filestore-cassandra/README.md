@@ -26,13 +26,10 @@ Cassandra connection settings are passed as `KC_SPI_CASSANDRA_CONNECTION_DEFAULT
 `KC_SPI_DATASTORE__FILE__RESOURCES_VERSION_SEED` pins the theme resources tag (required without a
 database, see [scenario 5](../05-filestore-postgres)).
 
-### The Cassandra driver reference.conf
+### Cassandra driver config
 
-The published cassandra extension is a shaded jar whose bundled `reference.conf` overwrites the
-DataStax/Apache driver's own, so the driver's `advanced.*` defaults are missing at runtime and it
-fails to start. `build-providers.sh` stages the driver's real `reference.conf`
-(`lib/cassandra-driver.conf`) into the image, and the deployment supplies it with
-`-Dconfig.file=/opt/keycloak/conf/cassandra-driver.conf`.
+`lib/cassandra-application.conf` holds the Cassandra driver configuration; it is baked into the image
+and loaded with `-Dconfig.file`. Edit it for driver tuning (consistency, timeouts).
 
 ## Two variants, two topologies
 

@@ -22,11 +22,10 @@ The image (`Dockerfile`) bakes both provider jars and runs `kc.sh build`:
 through its `areas` option, so users and sessions go to Cassandra instead of the relational database
 k8store would otherwise use. Nothing uses JPA, so JPA legacy is turned off.
 
-### The Cassandra driver reference.conf
+### Cassandra driver config
 
-As in [scenario 6](../06-filestore-cassandra), the shaded cassandra jar overwrites the driver's
-`reference.conf`, so `build-providers.sh` stages the driver's real one and the deployment supplies it
-with `-Dconfig.file=/opt/keycloak/conf/cassandra-driver.conf`.
+`lib/cassandra-application.conf` holds the Cassandra driver configuration; it is baked into the image
+and loaded with `-Dconfig.file`. Edit it for driver tuning (consistency, timeouts).
 
 ## Organizations
 

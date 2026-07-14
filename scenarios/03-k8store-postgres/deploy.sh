@@ -12,7 +12,9 @@ source ../../lib/common.sh
 
 NS=kc-03
 IMAGE="${CNK_REGISTRY}/cnk-03:dev"
-JAR=target/providers/keycloak-k8store-0.1.3.jar
+K8STORE_VERSION=0.1.5
+JAR="target/providers/keycloak-k8store-${K8STORE_VERSION}.jar"
+CRDS_URL="https://github.com/dominikschlosser/keycloak-k8store/releases/download/v${K8STORE_VERSION}/keycloak-k8store-crds.yaml"
 
 PRECONFIGURED=false
 BUILD=false
@@ -26,8 +28,8 @@ done
 
 require_cluster
 
-if [ "${BUILD}" = true ] || [ ! -f "${JAR}" ] || [ ! -d crds ]; then
-  log "Staging k8store provider jars and CRDs"
+if [ "${BUILD}" = true ] || [ ! -f "${JAR}" ]; then
+  log "Staging k8store provider jars"
   ./build-providers.sh
 fi
 
@@ -36,8 +38,8 @@ docker build -q -f Dockerfile -t "${IMAGE}" . >/dev/null
 docker push -q "${IMAGE}"
 
 ${KUBECTL} get ns "${NS}" >/dev/null 2>&1 || ${KUBECTL} create ns "${NS}"
-log "Applying CRDs"
-${KUBECTL} apply --server-side -f crds/ >/dev/null
+log "Applying k8store CRDs (published bundle, ${K8STORE_VERSION})"
+${KUBECTL} apply --server-side -f "${CRDS_URL}" >/dev/null
 log "Applying RBAC, PostgreSQL and Keycloak"
 ${KUBECTL} apply -f manifests/00-rbac.yaml
 apply_db "${NS}" postgres

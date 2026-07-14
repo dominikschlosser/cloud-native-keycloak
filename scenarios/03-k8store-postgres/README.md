@@ -40,8 +40,8 @@ the JPA organization store cannot reference them. To use Organizations you would
 ```
 
 `deploy.sh` stages the provider jars (`build-providers.sh`), builds and pushes the image to the local
-registry, applies the CRDs (extracted from the k8store jar into `crds/`), PostgreSQL and the two
-Keycloak replicas.
+registry, applies the k8store CRDs (the published `keycloak-k8store-crds.yaml` bundle), PostgreSQL and
+the two Keycloak replicas.
 
 ### Verify
 

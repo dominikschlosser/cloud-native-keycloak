@@ -70,7 +70,7 @@ spec:
             - name: KC_SPI_CASSANDRA_CONNECTION_DEFAULT_REPLICATION_FACTOR
               value: "1"
             - name: JAVA_OPTS_APPEND
-              value: "-Dconfig.file=/opt/keycloak/conf/cassandra-driver.conf"
+              value: "-Dconfig.file=/opt/keycloak/conf/cassandra-application.conf"
           ports:
             - name: http
               containerPort: 8080

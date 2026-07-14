@@ -58,15 +58,6 @@ resolve_providers() {
   log "Staged $(ls -1 "${outdir}" | wc -l | tr -d ' ') provider jars into ${outdir}"
 }
 
-# extract_k8store_crds <jar> <crd_outdir> : pull the generated CRD manifests that the
-# k8store build embeds under META-INF/fabric8/ out of its jar.
-extract_k8store_crds() {
-  local jar="$1" out="$2"
-  rm -rf "${out}"; mkdir -p "${out}"
-  unzip -o -j "${jar}" 'META-INF/fabric8/*.yml' -d "${out}" >/dev/null
-  log "Extracted $(ls -1 "${out}" | wc -l | tr -d ' ') CRDs from $(basename "${jar}")"
-}
-
 # rest_smoke <base_url> : master realm answers 200 and admin/admin password grant works
 rest_smoke() {
   local base="$1" status err

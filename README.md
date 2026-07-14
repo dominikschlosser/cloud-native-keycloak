@@ -11,6 +11,11 @@ All six run Keycloak with the `stateless` feature (no external Infinispan). What
 **dynamic data** (users, sessions) is stored. Configuration is always version-controlled; dynamic
 data always lives in a database.
 
+A distinction that runs through everything below: in **scenarios 1 and 2 the git artifact is applied
+into the database** — the live configuration store is PostgreSQL, and the CR/HCL is desired state
+that a controller reconciles. In **scenarios 3-6 the git artifact is the store itself** — the CRs or
+YAML files Keycloak reads are the committed files.
+
 ## The six scenarios
 
 | # | Scenario | Config store | Dynamic store | Database-free | Organizations | Config as |
@@ -23,7 +28,7 @@ data always lives in a database.
 | 6 | [filestore-cassandra](scenarios/06-filestore-cassandra) | YAML files | Cassandra | yes | no | filestore YAML files |
 
 Scenarios 3-6 use community datastore extensions pulled from Maven Central:
-[k8store](https://github.com/dominikschlosser/keycloak-k8store) `0.1.3`,
+[k8store](https://github.com/dominikschlosser/keycloak-k8store) `0.1.5`,
 [keycloak-cassandra-extension](https://github.com/opdt/keycloak-cassandra-extension) `6.0.0`, and
 [keycloak-extension-filestore](https://github.com/dominikschlosser/keycloak-extension-filestore)
 `3.0.0`. Each selects a datastore (`--spi-datastore--provider=...`) and self-configures the rest.
@@ -61,76 +66,105 @@ another on the one cluster. See each scenario's README for its exact verify comm
 
 ## Comparison across dimensions
 
-Each scenario's pros and cons, along the dimensions that tend to decide between them.
+Factual characteristics per scenario, along the dimensions that distinguish them.
 
 ### 1 · operator-stateless
-- **Versioning:** the realm is one `KeycloakRealmImport` CR (Keycloak's full realm representation).
-  Coarse-grained (a whole realm per file), and import is one-way, so console edits after import drift
-  from the committed CR.
-- **Backup/restore:** standard Keycloak storage, so mature tooling applies (`pg_dump`, `kc.sh export`,
-  realm import). One relational database to back up.
-- **Ease of use:** highest. The official operator owns rollout, upgrades, TLS and scaling, and is
-  well documented.
-- **Flexibility:** the realm import covers the whole realm representation, but the `Keycloak` CR
-  exposes only a subset of server options as fields; the rest go through the `additionalOptions`
-  escape hatch, so server-level tuning is less direct.
-- **Ops:** needs a relational database; supports Organizations and all features.
+- **Config lives in:** PostgreSQL. The `KeycloakRealmImport` CR is applied into the database; the
+  running store is the database, not the CR. Edits made through the console or API after import are
+  not written back to the CR, so the CR and the live config can diverge.
+- **Applying changes:** edit the CR and re-apply; the operator re-runs the import.
+- **Backup/restore:** back up the PostgreSQL database (`pg_dump`, `kc.sh export`). The CR reproduces
+  the imported subset, not later runtime edits.
+- **Config surface:** the realm import is Keycloak's full realm representation. The `Keycloak` CR
+  exposes a subset of server options as fields; other options go through `additionalOptions`, which
+  takes server config keys only. Custom provider jars, themes, and arbitrary pod/container fields are
+  not expressible through the CR and require a custom image or `spec.unsupported.podTemplate`.
+- **Zero-downtime upgrades:** the operator rolls the StatefulSet; database schema migrations run on
+  the new version.
+- **Requires:** the Keycloak Operator and a relational database. Supports Organizations.
 
 ### 2 · terraform
-- **Versioning:** the strongest change-management story. Fine-grained HCL resources, reviewable
-  `terraform plan` diffs, and state that detects drift and reconciles the server back to the code.
-- **Backup/restore:** standard storage (database backup), plus the Terraform state and code together
-  reproduce the config. Production needs a real state backend (S3/GCS/database).
-- **Ease of use:** familiar to platform teams, but it adds Terraform, the provider and a state
-  backend to operate.
-- **Flexibility:** a large curated resource set with interpolation and modules, and it can orchestrate
-  systems beyond Keycloak. It does lag brand-new Keycloak features (not every field is a resource).
-- **Ops:** needs a relational database; supports Organizations (standard storage).
+- **Config lives in:** PostgreSQL. `terraform apply` writes config into the database through the admin
+  API; the running store is the database. The HCL plus Terraform state is desired state, and
+  out-of-band edits show up as drift on the next `plan`.
+- **Applying changes:** edit the HCL and re-run `terraform apply`; the provider reconciles the server.
+  `terraform plan` shows the diff.
+- **Backup/restore:** back up the database. The HCL plus a persisted state backend reproduces the
+  config.
+- **Config surface:** the provider exposes a defined set of resources (realms, clients, scopes, roles,
+  flows, and more) with HCL interpolation and modules, and can manage systems beyond Keycloak. It does
+  not cover every Keycloak feature; support for a new feature lands after a provider release.
+- **Zero-downtime upgrades:** rolling update of the Deployment; database schema migrations run.
+  Tracking config across upgrades needs a persisted state backend.
+- **Requires:** Terraform (or OpenTofu), the provider, a state backend, and a relational database.
+  Supports Organizations.
 
 ### 3 · k8store-postgres
-- **Versioning:** one CR per entity, native GitOps. `kubectl apply` is served within milliseconds with
-  no restart, and read-only mode makes the CRs the single source of truth.
-- **Backup/restore:** config CRs live in git (git is the backup) and in etcd; users live in
-  PostgreSQL. Two systems to back up.
-- **Ease of use:** kubectl-native and no rebuild to change config, but it adds custom CRDs and RBAC on
-  a custom API group.
-- **Flexibility:** CRs hold Keycloak's own representation JSON verbatim, so any exported field is
-  expressible (high config fidelity).
-- **Ops:** needs a relational database; no Organizations with the default areas.
+- **Config lives in:** Kubernetes CRs (etcd); the committed manifests are the source and read-only
+  mode makes them authoritative. Users and sessions live in PostgreSQL.
+- **Applying changes:** `kubectl apply` a CR; every replica serves it within milliseconds, no restart.
+  Read-only mode rejects config writes through Keycloak.
+- **Backup/restore:** the CR manifests in git are the config backup (also recoverable from etcd). Back
+  up PostgreSQL for users and sessions.
+- **Config surface:** CRs hold Keycloak's own representation JSON verbatim, so any field an export
+  produces is expressible.
+- **Zero-downtime upgrades:** rolling update; each replica keeps an in-memory CR mirror. CRD schemas
+  regenerate on a Keycloak version bump and apply without downtime; database migrations run.
+- **Requires:** the k8store CRDs, RBAC on the `k8store.dominikschlosser.github.io` API group, and a
+  relational database. No Organizations with the default areas.
 
 ### 4 · k8store-cassandra
-- **Versioning:** same CR model as scenario 3.
-- **Backup/restore:** config in git and etcd; dynamic data in Cassandra (`nodetool` snapshots), a
-  different backup model than a relational database.
-- **Ease of use:** the most experimental combination. Cassandra is heavier to operate, and the shaded
-  driver needs a supplied `reference.conf` (handled by the image).
-- **Flexibility:** high (representation CRs).
-- **Ops:** fully database-free (no relational database); no Organizations.
+- **Config lives in:** Kubernetes CRs (as scenario 3). Users and sessions live in Cassandra.
+- **Applying changes:** as scenario 3.
+- **Backup/restore:** CR manifests in git / etcd for config; Cassandra (`nodetool snapshot`) for
+  dynamic data.
+- **Config surface:** as scenario 3.
+- **Multi-datacenter:** Cassandra replicates across datacenters with per-DC `LOCAL_QUORUM`, which a
+  single relational primary does not provide. With `stateless` (sessions in the datastore, not
+  Infinispan), this supports active-active across sites without cross-site Infinispan session
+  replication.
+- **Zero-downtime upgrades:** rolling update; Cassandra schema migrations run on startup
+  (`cassandra-migration`). No relational database.
+- **Requires:** the k8store CRDs and RBAC, Cassandra, and the driver `application.conf` (see the
+  scenario README). No Organizations.
 
 ### 5 · filestore-postgres
-- **Versioning:** one YAML file per entity, very readable and easy to diff. But config is per-pod and a
-  running instance does not observe file edits, so changes mean an image rebuild and rollout.
-- **Backup/restore:** config is files in git, baked into the image (git is the backup); users live in
-  PostgreSQL.
-- **Ease of use:** the simplest format (plain files) with no custom API group, but the per-pod model
-  forces a single writable replica or an image-baked read-only seed, and the seeded admin needs a
-  small profile workaround.
-- **Flexibility:** files hold Keycloak's representation, so high config fidelity (identity providers
-  included).
-- **Ops:** needs a relational database; no Organizations.
+- **Config lives in:** YAML files — baked into the image (read-only variant) or on a per-pod volume
+  (writable variant). Users and sessions live in PostgreSQL.
+- **Applying changes:** rebuild the image (or write the file) and roll out. A running instance loads
+  the files once and does not observe later edits.
+- **Backup/restore:** the YAML files in git / the image are the config backup. Back up PostgreSQL for
+  users and sessions.
+- **Config surface:** files hold Keycloak's representation, identity providers included.
+- **Zero-downtime upgrades:** rolling update replaces pods with the new image; database migrations
+  run. Config is per-pod, so during the rollout window each pod serves its own image's config.
+- **Requires:** a relational database; no custom API group. No Organizations. The writable variant
+  runs one replica (per-pod files are not shared).
 
 ### 6 · filestore-cassandra
-- **Versioning:** same file model as scenario 5.
-- **Backup/restore:** config in git and the image; dynamic data in Cassandra.
-- **Ease of use:** files are simple, but this combines filestore's per-pod caveats with Cassandra's
-  operational weight and the driver `reference.conf` workaround.
-- **Flexibility:** high (representation files).
-- **Ops:** fully database-free; no Organizations.
+- **Config lives in:** YAML files in the image (as scenario 5). Users and sessions live in Cassandra.
+- **Applying changes:** as scenario 5.
+- **Backup/restore:** YAML files in git / image for config; Cassandra for dynamic data.
+- **Config surface:** as scenario 5.
+- **Multi-datacenter:** as scenario 4 (Cassandra multi-DC `LOCAL_QUORUM`, active-active with
+  `stateless`).
+- **Zero-downtime upgrades:** rolling update; Cassandra schema migrations on startup. No relational
+  database.
+- **Requires:** Cassandra and the driver `application.conf`. No Organizations. Writable variant is
+  single-replica.
+
+### Zero-downtime upgrades — what makes them work
+
+All six run with `stateless`, so user sessions live in the datastore (database, CRs, or Cassandra),
+not in an embedded Infinispan cache. Pod replacement during a rolling update therefore does not drop
+sessions, which is the precondition for a zero-downtime version upgrade. The two-replica scenarios
+keep at least one Ready replica serving through the Service during the roll (`maxUnavailable: 1`,
+`maxSurge: 0`); the single-replica writable filestore variant is the exception. Verified here by
+sending continuous requests through the Service during a `rollout restart` (`test/rollout-availability.sh`)
+and observing no failed requests. Cross-version compatibility (schema/CR/file migrations between two
+Keycloak versions) is per-store as noted above and is not exercised by this repo, which pins 26.7.0.
 
 ## How config is version-controlled per scenario
-
-Config areas (realms, clients, client scopes, roles) are always in git; dynamic areas (users,
-sessions) always in the database. The mechanism differs:
 
 - **Scenario 1** — a `KeycloakRealmImport` CR carrying the realm JSON, imported by the operator.
 - **Scenario 2** — Terraform HCL applied against the admin API by a one-shot Job.
