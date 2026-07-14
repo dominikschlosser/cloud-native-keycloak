@@ -1,47 +1,48 @@
 # cloud-native-keycloak
 
-Six ways to run **Keycloak 26.7.0** cloud-natively, each in its own folder with its own docs, each
+Seven ways to run **Keycloak 26.7.0** cloud-natively, each in its own folder with its own docs, each
 deployable into a **shared 2-worker [kind](https://kind.sigs.k8s.io/) cluster** in two variants:
 
 - a **new** instance (fresh Keycloak, master realm only, configure it yourself)
 - a **pre-configured** instance (a version-controlled `demo` realm applied the GitOps way)
 
-All six run Keycloak with the `stateless` feature (no external Infinispan). What differs is how
+All seven run Keycloak with the `stateless` feature (no external Infinispan). What differs is how
 **configuration** (realms, clients, client scopes, roles) is version-controlled and where
 **dynamic data** (users, sessions) is stored. Configuration is always version-controlled. Dynamic
 data always lives in a database.
 
-One distinction is where the config data lives: In **scenarios 1 and 2 the git artifact is applied
-into the database**. The live configuration store is PostgreSQL. The CR (or HCL) is desired state
-that a controller reconciles into it. In **scenarios 3-6 the git artifact is the store**. The CRs or
-YAML files Keycloak reads are the committed files themselves.
+One distinction is where the config data lives: In **scenarios 1-3 the git artifact is applied
+into the database**. The live configuration store is PostgreSQL. The CR, HCL, or realm file is desired
+state that a controller reconciles into it. In **scenarios 4-7 the git artifact is the store**. The
+CRs or YAML files Keycloak reads are the committed files themselves.
 
-## The six scenarios
+## The seven scenarios
 
 | # | Scenario | Config store | Dynamic store | Database-free | Organizations | Config as |
 |---|---|---|---|:---:|:---:|---|
 | 1 | [operator-stateless](scenarios/01-operator-stateless) | standard Keycloak | PostgreSQL | no | **yes** | `KeycloakRealmImport` CR |
 | 2 | [terraform](scenarios/02-terraform) | standard Keycloak | PostgreSQL | no | **yes** | Terraform HCL |
-| 3 | [k8store-postgres](scenarios/03-k8store-postgres) | Kubernetes CRs | PostgreSQL | no | no | k8store CR manifests |
-| 4 | [k8store-cassandra](scenarios/04-k8store-cassandra) | Kubernetes CRs | Cassandra | yes | no | k8store CR manifests |
-| 5 | [filestore-postgres](scenarios/05-filestore-postgres) | YAML files | PostgreSQL | no | no | filestore YAML files |
-| 6 | [filestore-cassandra](scenarios/06-filestore-cassandra) | YAML files | Cassandra | yes | no | filestore YAML files |
+| 3 | [keycloak-config-cli](scenarios/03-keycloak-config-cli) | standard Keycloak | PostgreSQL | no | **yes** | realm representation YAML |
+| 4 | [k8store-postgres](scenarios/04-k8store-postgres) | Kubernetes CRs | PostgreSQL | no | no | k8store CR manifests |
+| 5 | [k8store-cassandra](scenarios/05-k8store-cassandra) | Kubernetes CRs | Cassandra | yes | no | k8store CR manifests |
+| 6 | [filestore-postgres](scenarios/06-filestore-postgres) | YAML files | PostgreSQL | no | no | filestore YAML files |
+| 7 | [filestore-cassandra](scenarios/07-filestore-cassandra) | YAML files | Cassandra | yes | no | filestore YAML files |
 
-Scenarios 3-6 use community datastore extensions:
+Scenarios 4-7 use community datastore extensions:
 [k8store](https://github.com/dominikschlosser/keycloak-k8store),
 [keycloak-cassandra-extension](https://github.com/opdt/keycloak-cassandra-extension), and
 [keycloak-extension-filestore](https://github.com/dominikschlosser/keycloak-extension-filestore). 
 Each selects a datastore (`--spi-datastore--provider=...`) and self-configures the rest.
-Scenarios 1 and 2 use unmodified upstream Keycloak.
+Scenarios 1-3 use unmodified upstream Keycloak (config applied through the admin API).
 
 ## Organizations
 
-**Only scenarios 1 and 2 support Keycloak Organizations** (they use standard Keycloak storage). The
-extension-based scenarios disable the feature:
+**Only scenarios 1, 2, and 3 support Keycloak Organizations** (they use standard Keycloak storage).
+The extension-based scenarios disable the feature:
 
-- **k8store** (scenarios 3, 4): the default areas keep groups in CRs, and the JPA organization store
+- **k8store** (scenarios 4, 5): the default areas keep groups in CRs, and the JPA organization store
   cannot reference CR-backed groups. Organizations would need the opt-in `organization` area.
-- **filestore** and **cassandra** (scenarios 4, 5, 6): the extensions do not implement Organizations.
+- **filestore** and **cassandra** (scenarios 5, 6, 7): the extensions do not implement Organizations.
 
 The pre-configured demo realm in scenario 1 includes an Organization to show it working.
 
@@ -50,17 +51,17 @@ The pre-configured demo realm in scenario 1 includes an Organization to show it 
 ```bash
 kind/kind-up.sh                              # 1 control-plane + 2 workers + local registry (once)
 
-scenarios/03-k8store-postgres/deploy.sh                  # a new instance, or
-scenarios/03-k8store-postgres/deploy.sh --preconfigured  # the version-controlled demo realm
+scenarios/04-k8store-postgres/deploy.sh                  # a new instance, or
+scenarios/04-k8store-postgres/deploy.sh --preconfigured  # the version-controlled demo realm
 
-test/verify.sh kc-03 master security-admin-console       # new: REST + browser login + clients page
-test/verify.sh kc-03 demo   demo-app                     # pre-configured
+test/verify.sh kc-04 master security-admin-console       # new: REST + browser login + clients page
+test/verify.sh kc-04 demo   demo-app                     # pre-configured
 
 kind/kind-down.sh                            # tear it all down
 ```
 
 Every scenario follows the same shape (`deploy.sh [--preconfigured]`, then `test/verify.sh`). Each
-deploys into its own namespace (`kc-01` … `kc-06`). They do not collide and can run one after another
+deploys into its own namespace (`kc-01` … `kc-07`). They do not collide and can run one after another
 on the one cluster.
 
 The kind cluster publishes the Keycloak Service NodePorts on the host. A deployed scenario is
@@ -85,7 +86,7 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   expressible through the CR (they need a custom image or `spec.unsupported.podTemplate`).
 - **Config drift:** the database is always writable through the console and admin API. There is no
   store-level read-only. Preventing unintended config changes has to be done inside Keycloak with
-  fine-grained admin permissions (role configuration). Scenarios 3-6 can instead reject all config
+  fine-grained admin permissions (role configuration). Scenarios 4-7 can instead reject all config
   writes at the store (read-only mode, or read-only files).
 - **Zero-downtime upgrades:** the operator rolls the StatefulSet. Database schema migrations run on
   the new version.
@@ -112,7 +113,24 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   Supports Organizations.
 - **When to use:** your platform already runs Terraform and you want config as reviewable HCL with plan-based drift detection, on standard storage.
 
-### 3 · k8store-postgres
+### 3 · keycloak-config-cli
+- **Config lives in:** PostgreSQL. keycloak-config-cli imports the realm file into the database
+  through the admin API. The database is the running store. Edits made after an import can drift until
+  the next run.
+- **Applying changes:** edit the realm file and re-run the config-cli Job. It reconciles the realm to
+  the file.
+- **Backup/restore:** back up the database. The realm file reproduces the imported config.
+- **Config surface:** Keycloak's realm representation (the same shape as a realm export), so
+  realm-level config is complete. It applies whole realms rather than individual resources.
+- **Config drift:** the database is always writable. Re-running config-cli reconciles the realm back
+  to the file. As with the operator and terraform, there is no store-level read-only.
+- **Zero-downtime upgrades:** rolling update of the Deployment. Database schema migrations run.
+- **Requires:** a relational database and the `adorsys/keycloak-config-cli` image. Supports
+  Organizations.
+- **When to use:** you want declarative realm config as Keycloak's own realm representation, applied
+  and reconciled by a simple Job, on standard storage.
+
+### 4 · k8store-postgres
 - **Config lives in:** Kubernetes CRs (etcd). The committed manifests are the source, and read-only
   mode makes them authoritative. Users and sessions live in PostgreSQL.
 - **Applying changes:** `kubectl apply` a CR. Every replica serves it within milliseconds, no restart.
@@ -130,12 +148,12 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   relational database. No Organizations with the default areas.
 - **When to use:** you want GitOps-native config as Kubernetes CRs (applied by kubectl or ArgoCD, served read-only) with a relational database for users and sessions.
 
-### 4 · k8store-cassandra
-- **Config lives in:** Kubernetes CRs (as scenario 3). Users and sessions live in Cassandra.
-- **Applying changes:** as scenario 3.
+### 5 · k8store-cassandra
+- **Config lives in:** Kubernetes CRs (as scenario 4). Users and sessions live in Cassandra.
+- **Applying changes:** as scenario 4.
 - **Backup/restore:** CR manifests in git (or etcd) for config. Cassandra (`nodetool snapshot`) for
   dynamic data.
-- **Config surface:** as scenario 3.
+- **Config surface:** as scenario 4.
 - **Multi-datacenter:** Cassandra replicates across datacenters with per-DC `LOCAL_QUORUM`, which a
   single relational primary does not provide. With `stateless` (sessions in the datastore, not an
   Infinispan cache), this supports active-active across sites without cross-site Infinispan session
@@ -146,7 +164,7 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   scenario README). No Organizations.
 - **When to use:** you want CR-based GitOps config and a dynamic store that spans datacenters (active-active)... or already use Cassandra, for example in a 2 datacenter setup.
 
-### 5 · filestore-postgres
+### 6 · filestore-postgres
 - **Config lives in:** YAML files, baked into the image (read-only variant) or on a per-pod volume
   (writable variant). Users and sessions live in PostgreSQL.
 - **Applying changes:** rebuild the image (or write the file) and roll out. A running instance loads
@@ -162,12 +180,12 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   runs one replica (per-pod files are not shared).
 - **When to use:** you want file-based config mounted read-only, with a relational database, and can accept per-pod config (a single writable replica).
 
-### 6 · filestore-cassandra
-- **Config lives in:** YAML files in the image (as scenario 5). Users and sessions live in Cassandra.
-- **Applying changes:** as scenario 5.
+### 7 · filestore-cassandra
+- **Config lives in:** YAML files in the image (as scenario 6). Users and sessions live in Cassandra.
+- **Applying changes:** as scenario 6.
 - **Backup/restore:** YAML files in git (or the image) for config. Cassandra for dynamic data.
-- **Config surface:** as scenario 5.
-- **Multi-datacenter:** as scenario 4 (Cassandra multi-DC `LOCAL_QUORUM`, active-active with
+- **Config surface:** as scenario 6.
+- **Multi-datacenter:** as scenario 5 (Cassandra multi-DC `LOCAL_QUORUM`, active-active with
   `stateless`).
 - **Zero-downtime upgrades:** rolling update. Cassandra schema migrations on startup. No relational
   database.
@@ -175,36 +193,14 @@ Factual characteristics per scenario, along the dimensions that distinguish them
   single-replica.
 - **When to use:** you want file-based config and a fully database-free, multi-datacenter dynamic store (or already use Cassandra, for example in a 2 datacenter setup).
 
-### Zero-downtime upgrades
-
-All six scenarios run with `stateless`, so user sessions live in the datastore (database, CRs, or Cassandra),
-not in an embedded Infinispan cache. Pod replacement during a rolling update therefore does not drop
-sessions, which is the precondition for a zero-downtime version upgrade. The two-replica scenarios
-keep at least one Ready replica serving through the Service during the roll (`maxUnavailable: 1`,
-`maxSurge: 0`). The single-replica writable filestore variant is the exception. This is verified by
-sending continuous requests through the Service during a `rollout restart`
-(`test/rollout-availability.sh`) and observing no failed requests. Cross-version compatibility
-(schema, CR, or file migrations between two Keycloak versions) is per-store.
-
-## How config is version-controlled per scenario
-
-- **Scenario 1:** a `KeycloakRealmImport` CR carrying the realm JSON, imported by the operator.
-- **Scenario 2:** Terraform HCL applied against the admin API by a one-shot Job.
-- **Scenarios 3-4:** one CR manifest per entity (`KeycloakRealm`, `KeycloakClient`, …), applied with
-  `kubectl`. The pre-configured instance boots read-only, so the CRs are authoritative.
-- **Scenarios 5-6:** one YAML file per entity, baked into the image as a read-only seed.
-
-For scenarios 3-6 the demo realm was bootstrapped once in write mode. Its materialized config was
-exported and committed, which is the workflow those stores recommend.
-
 ## GitOps with ArgoCD
 
-The `--preconfigured` scenarios apply their config with a script. [`argocd/`](argocd) runs the same
+The `--preconfigured` scenarios apply their config with a script. [`scenarios/08-argocd/`](scenarios/08-argocd) runs the same
 k8store + PostgreSQL setup through **ArgoCD** instead. ArgoCD syncs Keycloak and the CRs from an
 in-cluster git server. Keycloak boots read-only, and a PostSync hook Job seeds the admin.
 
 ```bash
-argocd/setup.sh                              # ArgoCD + git server + the synced Application
+scenarios/08-argocd/setup.sh                              # ArgoCD + git server + the synced Application
 
 # change config the GitOps way: clone the repo, edit a CR, push
 kubectl -n argocd port-forward svc/git-server 9418:9418 &
@@ -216,12 +212,12 @@ cd /tmp/keycloak-gitops && git commit -am "update demo realm" && git push origin
 ArgoCD reconciles the commit and Keycloak serves the change with no restart (force it immediately
 with `kubectl -n argocd annotate application keycloak-k8store argocd.argoproj.io/refresh=hard
 --overwrite`). The ArgoCD UI is at `https://localhost:8081` (admin/admin) via
-`kubectl -n argocd port-forward svc/argocd-server 8081:443`. See [argocd/README.md](argocd/README.md).
+`kubectl -n argocd port-forward svc/argocd-server 8081:443`. See [scenarios/08-argocd/README.md](scenarios/08-argocd/README.md).
 
 ## Requirements
 
 Docker, `kind`, `kubectl`, `mvn` and a JDK (to stage the provider jars from Maven Central for
-scenarios 3-6), and Node.js with a local Chrome/Chromium (the browser verification uses
+scenarios 4-7), and Node.js with a local Chrome/Chromium (the browser verification uses
 `puppeteer-core` against the system Chrome). Keycloak images are `quay.io/keycloak/keycloak:26.7.0`.
 Scenario 2 also pulls a `hashicorp/terraform` image for the apply Job.
 

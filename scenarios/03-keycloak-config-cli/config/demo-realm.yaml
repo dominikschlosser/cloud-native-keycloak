@@ -1,0 +1,29 @@
+# Version-controlled realm configuration for keycloak-config-cli. It is a Keycloak realm
+# representation (the same shape as a realm export). keycloak-config-cli imports it into the
+# running Keycloak through the admin API and keeps the realm reconciled to this file.
+realm: demo
+enabled: true
+displayName: Demo Realm
+clientScopes:
+  - name: demo-scope
+    protocol: openid-connect
+    description: Demo client scope
+    attributes:
+      include.in.token.scope: "true"
+      display.on.consent.screen: "true"
+roles:
+  realm:
+    - name: demo-role
+      description: Demo realm role
+clients:
+  - clientId: demo-app
+    enabled: true
+    protocol: openid-connect
+    publicClient: false
+    standardFlowEnabled: true
+    directAccessGrantsEnabled: true
+    redirectUris:
+      - https://demo-app.example.com/*
+    webOrigins:
+      - "+"
+    secret: demo-secret

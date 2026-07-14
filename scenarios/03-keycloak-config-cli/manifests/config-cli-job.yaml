@@ -1,0 +1,39 @@
+# Imports the committed realm config into the running Keycloak with keycloak-config-cli. The
+# config file (config/demo-realm.yaml) is mounted from a ConfigMap. The tool waits for Keycloak
+# to be available, then imports and reconciles the realm through the admin API.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: config-cli
+  namespace: kc-03
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app: keycloak-config-cli
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: config-cli
+          image: adorsys/keycloak-config-cli:latest-26
+          env:
+            - name: KEYCLOAK_URL
+              value: http://keycloak:8080
+            - name: KEYCLOAK_USER
+              value: admin
+            - name: KEYCLOAK_PASSWORD
+              value: admin
+            - name: KEYCLOAK_AVAILABILITYCHECK_ENABLED
+              value: "true"
+            - name: KEYCLOAK_AVAILABILITYCHECK_TIMEOUT
+              value: 120s
+            - name: IMPORT_FILES_LOCATIONS
+              value: /config/*.yaml
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          configMap:
+            name: keycloak-config

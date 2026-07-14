@@ -1,0 +1,82 @@
+# Pre-configured (GitOps) instance. The committed demo config is baked into the image as a
+# read-only seed at /opt/keycloak/seed/filestore, identical on every pod, so this runs two
+# replicas pinned to separate workers. No volume (the config is immutable in the image).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: kc-06
+  labels:
+    app: keycloak
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: keycloak
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: keycloak
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - name: keycloak
+          image: localhost:5001/cnk-06:dev
+          imagePullPolicy: Always
+          args:
+            - start
+            - --db=postgres
+            - --features=stateless
+            - --spi-datastore--provider=file
+            - --features-disabled=authorization,admin-fine-grained-authz,organization
+            - --health-enabled=true
+            - --metrics-enabled=true
+            - --hostname-strict=false
+            - --http-enabled=true
+          env:
+            - name: KC_DB_URL
+              value: jdbc:postgresql://postgres:5432/keycloak
+            - name: KC_DB_USERNAME
+              value: keycloak
+            - name: KC_DB_PASSWORD
+              value: keycloak
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
+              value: admin
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              value: admin
+            - name: KC_SPI_MAP_STORAGE__FILE__DIR
+              value: /opt/keycloak/seed/filestore
+            # Pins the theme /resources/{tag}/ cache-buster so every replica agrees on it
+            # and the admin console assets resolve (see keycloak-new.yaml for details).
+            - name: KC_SPI_DATASTORE__FILE__RESOURCES_VERSION_SEED
+              value: cnk-06
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: management
+              containerPort: 9000
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 9000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 36
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 9000
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 12
