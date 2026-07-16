@@ -1,5 +1,8 @@
 # cloud-native-keycloak
 
+> 📝 This repository accompanies the blog post
+> [Cloud-Native Keycloak: Zero-Downtime Deployments in Practice](https://dominikschlosser.github.io/blog/2026/07/15/cloud-native-keycloak-zero-downtime.html).
+
 Seven ways to run **Keycloak 26.7.0** cloud-natively, each in its own folder with its own docs, each
 deployable into a **shared 2-worker [kind](https://kind.sigs.k8s.io/) cluster** in two variants:
 
